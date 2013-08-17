@@ -1,6 +1,6 @@
 class User < ActiveRecord::Base
   # Associations
-  belongs_to :organization
+  belongs_to :organization, dependent: :destroy
 
   # Validations
   validates :username, presence: true

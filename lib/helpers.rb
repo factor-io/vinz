@@ -17,7 +17,7 @@ module Sinatra
       end
 
       def auth_consumer
-        token = request.enf['HTTP_X_AUTH_TOKEN']
+        token = request.env['HTTP_X_AUTH_TOKEN']
         @consumer = Consumer.find_by_token(token)
         halt 401, 'Authorization denied' if @consumer.nil?
       end

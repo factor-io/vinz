@@ -20,17 +20,18 @@ FactoryGirl.define do
 
   factory :group do
     organization
+    name 'group'
   end
 
   factory :consumer do
     organization
-    group
+    groups {[FactoryGirl.create(:group)]}
     name 'consumer'
   end
 
   factory :config_item do
     organization
-    group
+    groups {[FactoryGirl.create(:group)]}
     name 'config'
     value 'some value'
   end

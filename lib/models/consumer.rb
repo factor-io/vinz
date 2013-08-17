@@ -1,6 +1,6 @@
 class Consumer < ActiveRecord::Base
   # Associations
-  belongs_to :organization
+  belongs_to :organization, dependent: :destroy
   has_and_belongs_to_many :groups
   has_and_belongs_to_many :config_items
 
@@ -8,11 +8,11 @@ class Consumer < ActiveRecord::Base
   validates :name, presence: true
 
   # Callbacks
-  before_create :generate_token
+  after_create :generate_token
 
   protected
 
   def generate_token
-    self.token = "consumer_#{id}"
+    self.update_attributes token: "consumer_#{id}"
   end
 end
