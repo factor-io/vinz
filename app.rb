@@ -3,77 +3,9 @@ ENV['RACK_ENV'] ||= 'development'
 require 'bundler'
 Bundler.require :default, ENV['RACK_ENV'].to_sym
 
-require_relative 'lib/helpers'
 require_relative 'config/environments'
-
-class Organization < ActiveRecord::Base
-  # Associations
-  has_many :users
-  has_many :consumers
-  has_many :groups
-  has_many :config_items
-
-  # Validations
-  validates :name, presence: true
-end
-
-class User < ActiveRecord::Base
-  # Associations
-  belongs_to :organization
-
-  # Validations
-  validates :username, presence: true
-  validates :password, presence: true
-
-  # Callbacks
-  after_create :generate_api_key
-
-  def super_admin?
-    role == 'super_admin'
-  end
-
-  protected
-
-  def generate_api_key
-    self.update_attributes api_key: "user_#{id}"
-  end
-end
-
-class Consumer < ActiveRecord::Base
-  # Associations
-  belongs_to :organization
-  has_and_belongs_to_many :groups
-  has_and_belongs_to_many :config_items
-
-  # Validations
-  validates :name, presence: true
-
-  # Callbacks
-  before_create :generate_token
-
-  protected
-
-  def generate_token
-    self.token = "consumer_#{id}"
-  end
-end
-
-class Group < ActiveRecord::Base
-  # Associations
-  belongs_to :organization
-  has_and_belongs_to_many :consumers
-  has_and_belongs_to_many :config_items
-
-  # Validations
-  validates :name, presence: true
-end
-
-class ConfigItem < ActiveRecord::Base
-  # Associations
-  has_and_belongs_to_many :groups
-
-  # Validations
-  validates :name, presence: true
+Dir[File.join("./lib", "**/*.rb")].each do |f|
+  require f
 end
 
 class Vinz < Sinatra::Base
