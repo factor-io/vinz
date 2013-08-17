@@ -24,7 +24,7 @@ module Sinatra
 
       def parse_json_body
         request.body.rewind
-        @data = JSON.parse request.body.read
+        @data = JSON.parse request.body.read, quirks_mode: true
       end
 
     end

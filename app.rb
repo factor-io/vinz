@@ -11,14 +11,11 @@ end
 class Vinz < Sinatra::Base
   helpers Sinatra::Vinz::Helpers
 
-  set(:method) do |*methods|
+  set(:methods) do |*methods|
     methods = [methods].flatten
-    methods.each do |method|
-      method = method.to_s.upcase
-      condition { request.request_method == method }
-    end
+    condition { methods.include?(request.request_method.upcase) }
   end
-  before method: [:post, :put] do
+  before methods: %w{POST PUT} do
     parse_json_body
   end
 
@@ -45,12 +42,18 @@ class Vinz < Sinatra::Base
 
   post '/organizations' do
     auth_super_admin
-    org_keys = [:name]
-    org_params = @data.select { |k, v| org_keys.include?(k) }
-    org = Organization.create(org_params)
+    begin
+      org = Organization.create!(@data)
+    rescue ActiveRecord::RecordInvalid
+      halt 400
+    end
+
+    status 201
+    org.to_json
   end
 
   get '/consumers' do
+    auth_user
   end
 
   post '/consumers' do

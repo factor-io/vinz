@@ -17,4 +17,7 @@ end
 
 configure :test do
   set :database, 'sqlite:///vinz-test.db'
+  logger = Logger.new(STDOUT)
+  logger.level = Logger::INFO
+  ActiveRecord::Base.logger = logger
 end
