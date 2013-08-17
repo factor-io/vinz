@@ -1,4 +1,6 @@
 # rakefile
+require './app'
+require 'sinatra/activerecord/rake'
 require 'rspec/core/rake_task'
  
 RSpec::Core::RakeTask.new :specs do |task|
@@ -6,3 +8,11 @@ RSpec::Core::RakeTask.new :specs do |task|
 end
  
 task :default => ['specs']
+
+namespace :db do
+  desc 'Load the seed data from db/seeds.rb'
+  task :seed do
+    seed_file = File.join('db/seed.rb')
+    load(seed_file) if File.exist?(seed_file)
+  end
+end
