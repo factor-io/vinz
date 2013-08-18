@@ -6,5 +6,5 @@ class Organization < ActiveRecord::Base
   has_many :config_items
 
   # Validations
-  validates :name, presence: true
+  validates_presence_of :name
 end

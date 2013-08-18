@@ -52,6 +52,29 @@ class Vinz < Sinatra::Base
     org.to_json
   end
 
+  put '/organizations/:id' do
+    auth_super_admin
+    begin
+      org = Organization.find(params[:id])
+      org.update_attributes!(@data)
+    rescue ActiveRecord::RecordNotFound
+      halt 404
+    rescue ActiveRecord::RecordInvalid
+      halt 400
+    end
+
+    org.to_json
+  end
+
+  delete '/organizations/:id' do
+    auth_super_admin
+    begin
+      Organization.destroy(params[:id])
+    rescue ActiveRecord::RecordNotFound
+      halt 404
+    end
+  end
+
   get '/consumers' do
     auth_user
   end

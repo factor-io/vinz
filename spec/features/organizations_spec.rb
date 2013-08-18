@@ -70,11 +70,77 @@ describe 'Organizations' do
   end
 
   describe 'PUT /organizations/:id' do
-    it 'should be implemented'
+    before do
+      @org = FactoryGirl.create(:organization)
+      @new_org = {
+        'name' => 'New organization'
+      }
+    end
+
+    describe 'when valid data is provided' do
+      before do
+        put "/organizations/#{@org.id}", @new_org.to_json, 'HTTP_X_AUTH_TOKEN' => @super_admin.api_key
+      end
+
+      it 'should update the organization' do
+        last_response.status.should == 200
+        returned_object = JSON.parse(last_response.body)
+        returned_object['name'].should == @new_org['name']
+        returned_object['id'].should == @org.id
+
+        @org.reload
+        @org.name.should == @new_org['name']
+      end
+    end
+
+    describe 'when organization does not exist' do
+      before do
+        put "/organizations/nonexistent", @new_org.to_json, 'HTTP_X_AUTH_TOKEN' => @super_admin.api_key
+      end
+
+      it 'should return 404' do
+        last_response.status.should == 404
+      end
+    end
+
+    describe 'when invalid data is provided' do
+      before do
+        @old_name = @org.name
+        put "/organizations/#{@org.id}", {'name' => nil}.to_json, 'HTTP_X_AUTH_TOKEN' => @super_admin.api_key
+      end
+
+      it 'should return 400 bad request and not update the organization' do
+        last_response.status.should == 400
+
+        @org.reload
+        @org.name.should == @old_name
+      end
+    end
+
   end
 
   describe 'DELETE /organizations/:id' do
-    it 'should be implemented'
+    before do
+      @org = FactoryGirl.create(:organization)
+    end
+
+    describe 'when organization exists' do
+      before { delete "/organizations/#{@org.id}", nil, 'HTTP_X_AUTH_TOKEN' => @super_admin.api_key }
+
+      it 'should delete the organization' do
+        last_response.status.should == 200
+        expect { Organization.find(@org.id) }.should raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
+    describe 'when organization does not exist' do
+      before { delete "/organizations/nonexistent", nil, 'HTTP_X_AUTH_TOKEN' => @super_admin.api_key }
+
+      it 'should return 404' do
+        last_response.status.should == 404
+      end
+    end
+
   end
 
 end
