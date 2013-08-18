@@ -69,4 +69,12 @@ describe 'Organizations' do
 
   end
 
+  describe 'PUT /organizations/:id' do
+    it 'should be implemented'
+  end
+
+  describe 'DELETE /organizations/:id' do
+    it 'should be implemented'
+  end
+
 end
