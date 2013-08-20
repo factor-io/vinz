@@ -19,6 +19,7 @@ class Vinz < Sinatra::Base
 
   post '/consumers' do
     auth_user
+    halt 401 if @data['organization_id'] != @user.organization.id && !@user.super_admin?
 
     begin
       consumer = Consumer.create!(@data)
@@ -32,6 +33,7 @@ class Vinz < Sinatra::Base
 
   put '/consumers/:id' do
     auth_user
+    halt 401 if @data['organization_id'] != @user.organization.id && !@user.super_admin?
 
     begin
       consumer = Consumer.find(params[:id])
