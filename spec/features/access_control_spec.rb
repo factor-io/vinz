@@ -12,8 +12,8 @@ describe 'Access control' do
     end
 
     describe 'when not a super admin' do
+      let(:user) { FactoryGirl.create :user }
       before do
-        user = FactoryGirl.create :user
         headers = {'HTTP_X_AUTH_TOKEN' => user.api_key}
         get '/organizations', nil, headers
       end
@@ -24,8 +24,8 @@ describe 'Access control' do
     end
 
     describe 'when a super admin' do
+      let(:user) { FactoryGirl.create :super_admin }
       before do
-        user = FactoryGirl.create :super_admin
         headers = {'HTTP_X_AUTH_TOKEN' => user.api_key}
         get '/organizations', nil, headers
       end
@@ -39,9 +39,7 @@ describe 'Access control' do
 
   describe 'when user is required' do
 
-    before do
-      @user = FactoryGirl.create :user
-    end
+    let(:user) { FactoryGirl.create :user }
 
     describe 'when no key is supplied' do
       before { get '/consumers' }
@@ -60,7 +58,7 @@ describe 'Access control' do
     end
 
     describe 'when valid key is supplied' do
-      before { get '/consumers', nil, 'HTTP_X_AUTH_TOKEN' => @user.api_key }
+      before { get '/consumers', nil, 'HTTP_X_AUTH_TOKEN' => user.api_key }
 
       it 'should allow access' do
         last_response.status.should == 200
@@ -71,7 +69,7 @@ describe 'Access control' do
 
   describe 'when consumer is required' do
 
-    before { @consumer = FactoryGirl.create :consumer }
+    let(:consumer) { FactoryGirl.create :consumer }
 
     describe 'when no token is provided' do
       before { get '/config_items' }
@@ -90,7 +88,7 @@ describe 'Access control' do
     end
 
     describe 'when valid token is provided' do
-      before { get '/config_items', nil, 'HTTP_X_AUTH_TOKEN' => @consumer.token }
+      before { get '/config_items', nil, 'HTTP_X_AUTH_TOKEN' => consumer.token }
 
       it 'should allow access' do
         last_response.status.should == 200
