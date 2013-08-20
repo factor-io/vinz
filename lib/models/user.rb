@@ -13,6 +13,10 @@ class User < ActiveRecord::Base
     role == 'super_admin'
   end
 
+  def admin?
+    role == 'admin' || role == 'super_admin'
+  end
+
   protected
 
   def generate_api_key
