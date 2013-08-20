@@ -2,10 +2,10 @@ class Consumer < ActiveRecord::Base
   # Associations
   belongs_to :organization, dependent: :destroy
   has_and_belongs_to_many :groups
-  has_and_belongs_to_many :config_items
 
   # Validations
-  validates :name, presence: true
+  validates_presence_of :organization_id, :name
+  validates_associated :organization, :groups
 
   # Callbacks
   after_create :generate_token
