@@ -108,7 +108,7 @@ describe 'Organizations' do
 
       it 'should delete the organization' do
         last_response.status.should == 200
-        expect { Organization.find(org.id) }.should raise_error(ActiveRecord::RecordNotFound)
+        expect { Organization.find(org.id) }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
 
