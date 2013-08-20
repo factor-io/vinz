@@ -1,5 +1,7 @@
 ENV['RACK_ENV'] = 'test'
 
+require 'debugger'
+
 require_relative File.join('..', 'app')
 
 RSpec.configure do |config|
