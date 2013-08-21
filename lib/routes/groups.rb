@@ -2,6 +2,7 @@ class Vinz < Sinatra::Base
 
   get '/groups' do
     auth_user
+    @user.organization.groups.to_json
   end
 
   get '/groups/:id' do
