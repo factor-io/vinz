@@ -90,7 +90,57 @@ describe 'Config Items' do
   end
 
   describe 'PUT /config_items/:id' do
-    it 'should be implemented'
+    let(:item) { org.config_items.first }
+    let(:new_value) { 'new value' }
+    before { item.value = new_value }
+
+    describe 'when item exists' do
+      describe 'and user has access' do
+        describe 'and data is valid' do
+          before { put "/config_items/#{item.id}", item.to_json, 'HTTP_X_AUTH_TOKEN' => org.users.first.api_key }
+
+          it 'updates the item and returns its attrs' do
+            last_response.status.should == 200
+            item.reload.value.should == new_value
+            data = JSON.parse(last_response.body)
+            data['id'].should == item.id
+            data['value'].should == item.value
+          end
+        end
+
+        describe 'but data is invalid' do
+          before do
+            item.name = nil
+            put "/config_items/#{item.id}", item.to_json, 'HTTP_X_AUTH_TOKEN' => org.users.first.api_key
+          end
+
+          it 'rejects the request' do
+            last_response.status.should == 400
+            item.reload
+            item.name.should_not == nil
+            item.value.should_not == new_value
+          end
+        end
+      end
+
+      describe 'but user does not have access' do
+        before { put "/config_items/#{item.id}", item.to_json, 'HTTP_X_AUTH_TOKEN' => FactoryGirl.create(:user).api_key }
+
+        it 'rejects the request' do
+          last_response.status.should == 401
+          item.reload.value.should_not == new_value
+        end
+      end
+    end
+
+    describe 'when item does not exist' do
+      before { put "/config_items/nonexistent", item.to_json, 'HTTP_X_AUTH_TOKEN' => org.users.first.api_key }
+
+      it 'rejects the request' do
+        last_response.status.should == 404
+        item.reload.value.should_not == new_value
+      end
+    end
   end
 
   describe 'DELETE /config_items/:id' do

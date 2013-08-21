@@ -37,20 +37,14 @@ class Vinz < Sinatra::Base
     begin
       item = ConfigItem.find(params[:id])
       verify_ownership(@user, item)
+      item.update_attributes!(@data)
     rescue ActiveRecord::RecordNotFound
       halt 404
+    rescue ActiveRecord::RecordInvalid
+      halt 400
     end
 
-    #begin
-      #item = ConfigItem.find(params[:id])
-      #item.update_attributes!(@data)
-    #rescue ActiveRecord::RecordNotFound
-      #halt 404
-    #rescue ActiveRecord::RecordInvalid
-      #halt 400
-    #end
-
-    #item.to_json
+    item.to_json
   end
 
   delete '/config_items/:id' do
