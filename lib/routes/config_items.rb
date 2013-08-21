@@ -42,7 +42,6 @@ class Vinz < Sinatra::Base
 
   put '/config_items/:id' do
     auth_user
-    @data.except!('organization_id') if !@user.super_admin?
     @data.extract!(%w{name value})
     
     begin
