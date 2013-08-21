@@ -2,6 +2,7 @@ class Vinz < Sinatra::Base
 
   get '/users' do
     auth_admin
+    @user.organization.users.all.to_json
   end
 
   get '/users/:id' do

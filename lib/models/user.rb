@@ -3,6 +3,9 @@ class User < ActiveRecord::Base
   belongs_to :organization, dependent: :destroy
   has_one :api_key, as: :key_owner
 
+  # Named scopes
+  scope :admins, -> { where(role: 'admin') }
+
   # Validations
   validates_presence_of :organization_id, :username, :password
   validates_associated :organization
