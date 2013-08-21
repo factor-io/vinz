@@ -8,7 +8,8 @@ FactoryGirl.define do
 
       fo.users { |u| [
         u.association(:user, username: 'user1'),
-        u.association(:user, username: 'user2')
+        u.association(:user, username: 'user2'),
+        u.association(:admin)
       ] }
 
       fo.groups { |g| [
