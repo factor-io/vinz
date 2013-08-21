@@ -2,10 +2,7 @@ class Vinz < Sinatra::Base
 
   get '/config_items' do
     auth_consumer
-
-    #items = @consumer.groups.map { |group| ConfigItem.find_by_group_id(group.id) }
-    #items = items.flatten.uniq { |i| i.id }
-    #items.to_json
+    @consumer.config_items.to_json
   end
 
   get '/config_items/:id' do
@@ -18,12 +15,7 @@ class Vinz < Sinatra::Base
       halt 404
     end
 
-    #begin
-      #item = ConfigItem.find(params[:id])
-    #rescue ActiveRecord::RecordNotFound
-      #halt 404
-    #end
-    #item.to_json
+    item.to_json
   end
 
   post '/config_items' do
