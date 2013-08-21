@@ -5,7 +5,6 @@ orgs = [
       {
         username: 'alex',
         password: 'pass',
-        api_key: 'key',
         role: 'super_admin'
       }
     ]

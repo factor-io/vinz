@@ -5,7 +5,7 @@ describe 'Config Items' do
   let(:org) { FactoryGirl.create(:full_organization) }
 
   describe 'GET /config_items' do
-    before { get '/config_items', nil, 'HTTP_X_AUTH_TOKEN' => org.consumers.first.token }
+    before { get '/config_items', nil, 'HTTP_X_AUTH_TOKEN' => org.consumers.first.api_key.key }
 
     it 'returns all config items consumer has access to' do
       last_response.status.should == 200
@@ -19,7 +19,7 @@ describe 'Config Items' do
       let(:item) { org.config_items.first }
 
       describe 'when consumer has access' do
-        before { get "/config_items/#{item.id}", nil, 'HTTP_X_AUTH_TOKEN' => org.consumers.first.token }
+        before { get "/config_items/#{item.id}", nil, 'HTTP_X_AUTH_TOKEN' => org.consumers.first.api_key.key }
 
         it 'returns the item data' do
           last_response.status.should == 200
@@ -30,7 +30,7 @@ describe 'Config Items' do
       end
 
       describe 'when consumer does not have access' do
-        before { get "/config_items/#{item.id}", nil, 'HTTP_X_AUTH_TOKEN' => FactoryGirl.create(:consumer) }
+        before { get "/config_items/#{item.id}", nil, 'HTTP_X_AUTH_TOKEN' => FactoryGirl.create(:consumer).api_key.key }
 
         it 'rejects the request' do
           last_response.status.should == 401
@@ -39,7 +39,7 @@ describe 'Config Items' do
     end
 
     describe 'when item does not exist' do
-      before { get "/config_items/nonexistent", nil, 'HTTP_X_AUTH_TOKEN' => org.consumers.last.token }
+      before { get "/config_items/nonexistent", nil, 'HTTP_X_AUTH_TOKEN' => org.consumers.last.api_key.key }
 
       it 'returns a 404' do
         last_response.status.should == 404
@@ -53,7 +53,7 @@ describe 'Config Items' do
 
     describe 'when data is valid' do
       before do
-        post '/config_items', item_data.to_json, 'HTTP_X_AUTH_TOKEN' => org.users.first.api_key
+        post '/config_items', item_data.to_json, 'HTTP_X_AUTH_TOKEN' => org.users.first.api_key.key
       end
 
       it 'stores the item' do
@@ -67,7 +67,7 @@ describe 'Config Items' do
       before do
         item_data.organization = nil
         item_data.name = nil
-        post '/config_items', item_data.to_json, 'HTTP_X_AUTH_TOKEN' => org.users.first.api_key
+        post '/config_items', item_data.to_json, 'HTTP_X_AUTH_TOKEN' => org.users.first.api_key.key
       end
 
       it 'rejects the request' do
@@ -85,7 +85,7 @@ describe 'Config Items' do
     describe 'when item exists' do
       describe 'and user has access' do
         describe 'and data is valid' do
-          before { put "/config_items/#{item.id}", item.to_json, 'HTTP_X_AUTH_TOKEN' => org.users.first.api_key }
+          before { put "/config_items/#{item.id}", item.to_json, 'HTTP_X_AUTH_TOKEN' => org.users.first.api_key.key }
 
           it 'updates the item and returns its attrs' do
             last_response.status.should == 200
@@ -99,7 +99,7 @@ describe 'Config Items' do
         describe 'but data is invalid' do
           before do
             item.name = nil
-            put "/config_items/#{item.id}", item.to_json, 'HTTP_X_AUTH_TOKEN' => org.users.first.api_key
+            put "/config_items/#{item.id}", item.to_json, 'HTTP_X_AUTH_TOKEN' => org.users.first.api_key.key
           end
 
           it 'rejects the request' do
@@ -112,7 +112,7 @@ describe 'Config Items' do
       end
 
       describe 'but user does not have access' do
-        before { put "/config_items/#{item.id}", item.to_json, 'HTTP_X_AUTH_TOKEN' => FactoryGirl.create(:user).api_key }
+        before { put "/config_items/#{item.id}", item.to_json, 'HTTP_X_AUTH_TOKEN' => FactoryGirl.create(:user).api_key.key }
 
         it 'rejects the request' do
           last_response.status.should == 401
@@ -122,7 +122,7 @@ describe 'Config Items' do
     end
 
     describe 'when item does not exist' do
-      before { put "/config_items/nonexistent", item.to_json, 'HTTP_X_AUTH_TOKEN' => org.users.first.api_key }
+      before { put "/config_items/nonexistent", item.to_json, 'HTTP_X_AUTH_TOKEN' => org.users.first.api_key.key }
 
       it 'rejects the request' do
         last_response.status.should == 404
@@ -136,7 +136,7 @@ describe 'Config Items' do
 
     describe 'when item exists' do
       describe 'and user has access' do
-        before { delete "/config_items/#{item.id}", nil, 'HTTP_X_AUTH_TOKEN' => org.users.first.api_key }
+        before { delete "/config_items/#{item.id}", nil, 'HTTP_X_AUTH_TOKEN' => org.users.first.api_key.key }
 
         it 'deletes the item' do
           last_response.status.should == 200
@@ -145,7 +145,7 @@ describe 'Config Items' do
       end
 
       describe 'but user does not have access' do
-        before { delete "/config_items/#{item.id}", nil, 'HTTP_X_AUTH_TOKEN' => FactoryGirl.create(:user).api_key }
+        before { delete "/config_items/#{item.id}", nil, 'HTTP_X_AUTH_TOKEN' => FactoryGirl.create(:user).api_key.key }
 
         it 'rejects the request' do
           last_response.status.should == 401
@@ -155,7 +155,7 @@ describe 'Config Items' do
     end
 
     describe 'when item does not exist' do
-      before { delete "/config_items/nonexistent", nil, 'HTTP_X_AUTH_TOKEN' => org.users.first.api_key }
+      before { delete "/config_items/nonexistent", nil, 'HTTP_X_AUTH_TOKEN' => org.users.first.api_key.key }
 
       it 'rejects the request' do
         last_response.status.should == 404

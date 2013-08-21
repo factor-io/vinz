@@ -3,7 +3,6 @@ class CreateConsumers < ActiveRecord::Migration
     create_table :consumers do |t|
       t.integer :organization_id
       t.string :name
-      t.string :token
       t.timestamps
     end
   end

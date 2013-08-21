@@ -7,7 +7,7 @@ describe 'Consumers' do
   let(:consumer) { org.consumers.first }
 
   describe 'GET /consumers' do
-    before { get '/consumers', nil, {'HTTP_X_AUTH_TOKEN' => user.api_key} }
+    before { get '/consumers', nil, {'HTTP_X_AUTH_TOKEN' => user.api_key.key} }
 
     it 'returns all the organizations consumers' do
       last_response.status.should == 200
@@ -20,7 +20,7 @@ describe 'Consumers' do
     describe 'when consumer exists' do
 
       describe 'and user has access' do
-        before { get "/consumers/#{consumer.id}", nil, 'HTTP_X_AUTH_TOKEN' => user.api_key }
+        before { get "/consumers/#{consumer.id}", nil, 'HTTP_X_AUTH_TOKEN' => user.api_key.key }
 
         it 'returns the consumer data' do
           last_response.status.should == 200
@@ -34,7 +34,7 @@ describe 'Consumers' do
         let(:new_consumer) { FactoryGirl.create :consumer }
 
         before do
-          get "/consumers/#{new_consumer.id}", nil, 'HTTP_X_AUTH_TOKEN' => user.api_key
+          get "/consumers/#{new_consumer.id}", nil, 'HTTP_X_AUTH_TOKEN' => user.api_key.key
         end
 
         it 'denies access' do
@@ -45,7 +45,7 @@ describe 'Consumers' do
     end
 
     describe 'when consumer does not exist' do
-      before { get '/consumers/nonexistent', nil, 'HTTP_X_AUTH_TOKEN' => user.api_key }
+      before { get '/consumers/nonexistent', nil, 'HTTP_X_AUTH_TOKEN' => user.api_key.key }
 
       it 'should return 404' do
         last_response.status.should == 404
@@ -59,7 +59,7 @@ describe 'Consumers' do
     describe 'when valid data is sent' do
       before do
         consumer_data.organization = org
-        post '/consumers', consumer_data.to_json, 'HTTP_X_AUTH_TOKEN' => user.api_key
+        post '/consumers', consumer_data.to_json, 'HTTP_X_AUTH_TOKEN' => user.api_key.key
       end
 
       it 'stores the data in the DB' do
@@ -74,7 +74,7 @@ describe 'Consumers' do
       let(:num_consumers) { Consumer.count }
       before do
         consumer_data.organization = FactoryGirl.create :organization
-        post '/consumers', consumer_data.to_json, 'HTTP_X_AUTH_TOKEN' => user.api_key
+        post '/consumers', consumer_data.to_json, 'HTTP_X_AUTH_TOKEN' => user.api_key.key
       end
 
       it 'rejects the request' do
@@ -90,7 +90,7 @@ describe 'Consumers' do
     describe 'when data is valid' do
       before do
         consumer.name = new_name
-        put "/consumers/#{consumer.id}", consumer.to_json, 'HTTP_X_AUTH_TOKEN' => user.api_key
+        put "/consumers/#{consumer.id}", consumer.to_json, 'HTTP_X_AUTH_TOKEN' => user.api_key.key
       end
 
       it 'updates the consumer' do
@@ -102,7 +102,7 @@ describe 'Consumers' do
     describe 'when data is invalid' do
       before do
         consumer.name = nil
-        put "/consumers/#{consumer.id}", consumer.to_json, 'HTTP_X_AUTH_TOKEN' => user.api_key
+        put "/consumers/#{consumer.id}", consumer.to_json, 'HTTP_X_AUTH_TOKEN' => user.api_key.key
       end
 
       it 'rejects the request' do
@@ -114,7 +114,7 @@ describe 'Consumers' do
     describe 'when user does not have access' do
       before do
         consumer.organization = FactoryGirl.create(:organization)
-        put "/consumers/#{consumer.id}", consumer.to_json, 'HTTP_X_AUTH_TOKEN' => user.api_key
+        put "/consumers/#{consumer.id}", consumer.to_json, 'HTTP_X_AUTH_TOKEN' => user.api_key.key
       end
 
       it 'rejects the request' do
@@ -127,7 +127,7 @@ describe 'Consumers' do
   describe 'DELETE /consumers/:id' do
     describe 'when consumer exists' do
       describe 'when user has access' do
-        before { delete "/consumers/#{consumer.id}", nil, 'HTTP_X_AUTH_TOKEN' => user.api_key }
+        before { delete "/consumers/#{consumer.id}", nil, 'HTTP_X_AUTH_TOKEN' => user.api_key.key }
 
         it 'deletes the consumer' do
           last_response.status.should == 200
@@ -138,7 +138,7 @@ describe 'Consumers' do
       describe 'when user does not have access' do
         before do
           consumer.update_attributes organization: FactoryGirl.create(:organization)
-          delete "/consumers/#{consumer.id}", nil, 'HTTP_X_AUTH_TOKEN' => user.api_key
+          delete "/consumers/#{consumer.id}", nil, 'HTTP_X_AUTH_TOKEN' => user.api_key.key
         end
 
         it 'rejects the request' do
@@ -150,7 +150,7 @@ describe 'Consumers' do
 
     describe 'when consumer does not exist' do
       let(:num_consumers) { Consumer.count }
-      before { delete '/consumers/nonexistent', nil, 'HTTP_X_AUTH_TOKEN' => user.api_key }
+      before { delete '/consumers/nonexistent', nil, 'HTTP_X_AUTH_TOKEN' => user.api_key.key }
 
       it 'returns 404' do
         last_response.status.should == 404

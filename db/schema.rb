@@ -10,7 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130816233337) do
+ActiveRecord::Schema.define(version: 20130821213909) do
+
+  create_table "api_keys", force: true do |t|
+    t.integer  "key_owner_id"
+    t.string   "key_owner_type"
+    t.string   "key"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "config_items", force: true do |t|
     t.integer  "organization_id"
@@ -23,7 +31,6 @@ ActiveRecord::Schema.define(version: 20130816233337) do
   create_table "consumers", force: true do |t|
     t.integer  "organization_id"
     t.string   "name"
-    t.string   "token"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -38,7 +45,6 @@ ActiveRecord::Schema.define(version: 20130816233337) do
     t.integer  "organization_id"
     t.string   "username"
     t.string   "password"
-    t.string   "api_key"
     t.string   "role"
     t.datetime "created_at"
     t.datetime "updated_at"

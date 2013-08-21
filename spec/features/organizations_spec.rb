@@ -6,7 +6,7 @@ describe 'Organizations' do
 
   describe 'GET /organizations' do
     let(:orgs) { Organization.all }
-    before { get '/organizations', nil, {'HTTP_X_AUTH_TOKEN' => super_admin.api_key} }
+    before { get '/organizations', nil, {'HTTP_X_AUTH_TOKEN' => super_admin.api_key.key} }
 
     it 'should return all organizations' do
       last_response.status.should == 200
@@ -20,7 +20,7 @@ describe 'Organizations' do
 
     describe 'when organization exists' do
       let(:org) { FactoryGirl.create :organization }
-      before { get "/organizations/#{org.id}", nil, {'HTTP_X_AUTH_TOKEN' => super_admin.api_key} }
+      before { get "/organizations/#{org.id}", nil, {'HTTP_X_AUTH_TOKEN' => super_admin.api_key.key} }
 
       it 'should return the org data' do
         last_response.status.should == 200
@@ -39,7 +39,7 @@ describe 'Organizations' do
 
     describe 'when valid data is provided' do
       let(:org) { FactoryGirl.build(:organization) }
-      before { post '/organizations', org.to_json, 'HTTP_X_AUTH_TOKEN' => super_admin.api_key }
+      before { post '/organizations', org.to_json, 'HTTP_X_AUTH_TOKEN' => super_admin.api_key.key }
 
       it 'should save the org in the db' do
         last_response.status.should == 201
@@ -50,7 +50,7 @@ describe 'Organizations' do
       let(:org) { FactoryGirl.build(:organization) }
       before do
         org.name = ''
-        post '/organizations', org.to_json, 'HTTP_X_AUTH_TOKEN' => super_admin.api_key
+        post '/organizations', org.to_json, 'HTTP_X_AUTH_TOKEN' => super_admin.api_key.key
       end
 
       it 'should not save the org in the db' do
@@ -65,7 +65,7 @@ describe 'Organizations' do
     let(:new_org) { {'name' => 'New organization'} }
 
     describe 'when valid data is provided' do
-      before { put "/organizations/#{org.id}", new_org.to_json, 'HTTP_X_AUTH_TOKEN' => super_admin.api_key }
+      before { put "/organizations/#{org.id}", new_org.to_json, 'HTTP_X_AUTH_TOKEN' => super_admin.api_key.key }
 
       it 'should update the organization' do
         last_response.status.should == 200
@@ -79,7 +79,7 @@ describe 'Organizations' do
     end
 
     describe 'when organization does not exist' do
-      before { put "/organizations/nonexistent", new_org.to_json, 'HTTP_X_AUTH_TOKEN' => super_admin.api_key }
+      before { put "/organizations/nonexistent", new_org.to_json, 'HTTP_X_AUTH_TOKEN' => super_admin.api_key.key }
 
       it 'should return 404' do
         last_response.status.should == 404
@@ -88,7 +88,7 @@ describe 'Organizations' do
 
     describe 'when invalid data is provided' do
       let(:old_name) { org.name }
-      before { put "/organizations/#{org.id}", {'name' => nil}.to_json, 'HTTP_X_AUTH_TOKEN' => super_admin.api_key }
+      before { put "/organizations/#{org.id}", {'name' => nil}.to_json, 'HTTP_X_AUTH_TOKEN' => super_admin.api_key.key }
 
       it 'should return 400 bad request and not update the organization' do
         last_response.status.should == 400
@@ -104,7 +104,7 @@ describe 'Organizations' do
     let(:org) { FactoryGirl.create(:organization) }
 
     describe 'when organization exists' do
-      before { delete "/organizations/#{org.id}", nil, 'HTTP_X_AUTH_TOKEN' => super_admin.api_key }
+      before { delete "/organizations/#{org.id}", nil, 'HTTP_X_AUTH_TOKEN' => super_admin.api_key.key }
 
       it 'should delete the organization' do
         last_response.status.should == 200
@@ -113,7 +113,7 @@ describe 'Organizations' do
     end
 
     describe 'when organization does not exist' do
-      before { delete "/organizations/nonexistent", nil, 'HTTP_X_AUTH_TOKEN' => super_admin.api_key }
+      before { delete "/organizations/nonexistent", nil, 'HTTP_X_AUTH_TOKEN' => super_admin.api_key.key }
 
       it 'should return 404' do
         last_response.status.should == 404
