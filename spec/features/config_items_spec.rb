@@ -5,24 +5,12 @@ describe 'Config Items' do
   let(:org) { FactoryGirl.create(:full_organization) }
 
   describe 'GET /config_items' do
-    describe 'when consumer belongs to groups with items' do
-      before { get '/config_items', nil, 'HTTP_X_AUTH_TOKEN' => org.consumers.first.token }
+    before { get '/config_items', nil, 'HTTP_X_AUTH_TOKEN' => org.consumers.first.token }
 
-      it 'returns all config items consumer has access to' do
-        last_response.status.should == 200
-        data = JSON.parse(last_response.body)
-        data.count.should == org.consumers.first.config_items.count
-      end
-    end
-
-    describe 'when consumer does not have belong to groups with items' do
-      before { get '/config_items', nil, 'HTTP_X_AUTH_TOKEN' => org.consumers.last.token }
-
-      it 'returns an empty array' do
-        last_response.status.should == 200
-        data = JSON.parse(last_response.body)
-        data.count.should == 0
-      end
+    it 'returns all config items consumer has access to' do
+      last_response.status.should == 200
+      data = JSON.parse(last_response.body)
+      data.count.should == org.config_items.count
     end
   end
 
@@ -42,7 +30,7 @@ describe 'Config Items' do
       end
 
       describe 'when consumer does not have access' do
-        before { get "/config_items/#{item.id}", nil, 'HTTP_X_AUTH_TOKEN' => org.consumers.last.token }
+        before { get "/config_items/#{item.id}", nil, 'HTTP_X_AUTH_TOKEN' => FactoryGirl.create(:consumer) }
 
         it 'rejects the request' do
           last_response.status.should == 401
@@ -61,10 +49,10 @@ describe 'Config Items' do
 
   describe 'POST /config_items' do
     let(:item_data) { FactoryGirl.build(:config_item) }
+    before { item_data.organization = org }
 
     describe 'when data is valid' do
       before do
-        item_data.groups = [org.groups.first]
         post '/config_items', item_data.to_json, 'HTTP_X_AUTH_TOKEN' => org.users.first.api_key
       end
 
@@ -77,7 +65,7 @@ describe 'Config Items' do
 
     describe 'when data is invalid' do
       before do
-        item_data.groups = [org.groups.first]
+        item_data.organization = nil
         item_data.name = nil
         post '/config_items', item_data.to_json, 'HTTP_X_AUTH_TOKEN' => org.users.first.api_key
       end

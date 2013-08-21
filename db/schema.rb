@@ -20,27 +20,10 @@ ActiveRecord::Schema.define(version: 20130816233337) do
     t.datetime "updated_at"
   end
 
-  create_table "config_items_groups", id: false, force: true do |t|
-    t.integer "config_item_id"
-    t.integer "group_id"
-  end
-
   create_table "consumers", force: true do |t|
     t.integer  "organization_id"
     t.string   "name"
     t.string   "token"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "consumers_groups", id: false, force: true do |t|
-    t.integer "consumer_id"
-    t.integer "group_id"
-  end
-
-  create_table "groups", force: true do |t|
-    t.integer  "organization_id"
-    t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

@@ -65,6 +65,7 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord
+  activesupport
   debugger
   factory_girl
   pg

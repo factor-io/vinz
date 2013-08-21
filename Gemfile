@@ -4,6 +4,7 @@ gem 'rake', '10.0.4'
 gem 'sinatra', '1.4.3'
 gem 'activerecord'
 gem 'sinatra-activerecord'
+gem 'activesupport'
 
 group :production do
   gem 'pg'

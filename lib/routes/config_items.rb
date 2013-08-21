@@ -1,8 +1,10 @@
+require 'active_support/core_ext/hash/except'
+
 class Vinz < Sinatra::Base
 
   get '/config_items' do
     auth_consumer
-    @consumer.config_items.to_json
+    @consumer.organization.config_items.to_json()
   end
 
   get '/config_items/:id' do
@@ -10,7 +12,6 @@ class Vinz < Sinatra::Base
 
     begin
       item = ConfigItem.find(params[:id])
-      halt 401 if (@consumer.groups & item.groups).empty?
     rescue ActiveRecord::RecordNotFound
       halt 404
     end
@@ -20,6 +21,13 @@ class Vinz < Sinatra::Base
 
   post '/config_items' do
     auth_user
+    if @user.super_admin?
+      halt 400 if @data['organization_id'].nil?
+    else
+      @data['organization_id'] ||= @user.organization.id
+      halt 401 if @data['organization_id'] != @user.organization.id
+    end
+    @data.extract!(%w{name value})
 
     begin
       item = ConfigItem.create!(@data)
@@ -33,6 +41,8 @@ class Vinz < Sinatra::Base
 
   put '/config_items/:id' do
     auth_user
+    @data.except!('organization_id') if !@user.super_admin?
+    @data.extract!(%w{name value})
     
     begin
       item = ConfigItem.find(params[:id])

@@ -12,11 +12,6 @@ FactoryGirl.define do
         u.association(:admin)
       ] }
 
-      fo.groups { |g| [
-        g.association(:group, name: 'group1'),
-        g.association(:group, name: 'group2')
-      ] }
-
       fo.consumers { |c| [
         c.association(:consumer, name: 'Consumer 1'),
         c.association(:consumer, name: 'Consumer 2'),
@@ -30,18 +25,6 @@ FactoryGirl.define do
         ci.association(:config_item, name: 'Item Both'),
         ci.association(:config_item, name: 'Item None'),
       ] }
-
-      after(:build) do |org|
-        org.consumers[0].update_attributes groups: [org.groups.first]
-        org.consumers[1].update_attributes groups: [org.groups.last]
-        org.consumers[2].update_attributes groups: org.groups
-        org.consumers[3].update_attributes groups: []
-
-        org.config_items[0].update_attributes groups: [org.groups.first]
-        org.config_items[1].update_attributes groups: [org.groups.last]
-        org.config_items[2].update_attributes groups: org.groups
-        org.config_items[3].update_attributes groups: []
-      end
     end
   end
 
@@ -57,11 +40,6 @@ FactoryGirl.define do
     factory :admin do
       role 'admin'
     end
-  end
-
-  factory :group do
-    organization
-    name 'group'
   end
 
   factory :consumer do
