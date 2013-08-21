@@ -5,7 +5,7 @@ describe 'Consumers' do
   let(:user) { FactoryGirl.create(:user) }
   let(:org) { user.organization }
   let(:consumer) { FactoryGirl.create(:consumer) }
-  before { consumer.update_attributes organization_id: org.id }
+  before { consumer.update_attributes organization: org }
 
   describe 'GET /consumers' do
     before { get '/consumers', nil, {'HTTP_X_AUTH_TOKEN' => user.api_key} }
