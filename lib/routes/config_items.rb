@@ -12,6 +12,7 @@ class Vinz < Sinatra::Base
 
     begin
       item = ConfigItem.find(params[:id])
+      halt 401 if @consumer.organization != item.organization
     rescue ActiveRecord::RecordNotFound
       halt 404
     end
