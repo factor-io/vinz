@@ -144,7 +144,36 @@ describe 'Config Items' do
   end
 
   describe 'DELETE /config_items/:id' do
-    it 'should be implemented'
+    let(:item) { org.config_items.first }
+
+    describe 'when item exists' do
+      describe 'and user has access' do
+        before { delete "/config_items/#{item.id}", nil, 'HTTP_X_AUTH_TOKEN' => org.users.first.api_key }
+
+        it 'deletes the item' do
+          last_response.status.should == 200
+          expect { item.reload }.to raise_error
+        end
+      end
+
+      describe 'but user does not have access' do
+        before { delete "/config_items/#{item.id}", nil, 'HTTP_X_AUTH_TOKEN' => FactoryGirl.create(:user).api_key }
+
+        it 'rejects the request' do
+          last_response.status.should == 401
+          expect { item.reload }.to_not raise_error
+        end
+      end
+    end
+
+    describe 'when item does not exist' do
+      before { delete "/config_items/nonexistent", nil, 'HTTP_X_AUTH_TOKEN' => org.users.first.api_key }
+
+      it 'rejects the request' do
+        last_response.status.should == 404
+        expect { item.reload }.to_not raise_error
+      end
+    end
   end
 
 end

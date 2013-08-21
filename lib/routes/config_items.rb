@@ -53,15 +53,10 @@ class Vinz < Sinatra::Base
     begin
       item = ConfigItem.find(params[:id])
       verify_ownership(@user, item)
+      item.destroy
     rescue ActiveRecord::RecordNotFound
       halt 404
     end
-
-    #begin
-      #ConfigItem.destroy(params[:id])
-    #rescue ActiveRecord::RecordNotFound
-      #halt 404
-    #end
   end
 
 end
