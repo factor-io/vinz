@@ -2,10 +2,9 @@ require_relative '../spec_helper'
 
 describe 'Consumers' do
 
-  let(:user) { FactoryGirl.create(:user) }
-  let(:org) { user.organization }
-  let(:consumer) { FactoryGirl.create(:consumer) }
-  before { consumer.update_attributes organization: org }
+  let(:org) { FactoryGirl.create(:full_organization) }
+  let(:user) { org.users.first }
+  let(:consumer) { org.consumers.first }
 
   describe 'GET /consumers' do
     before { get '/consumers', nil, {'HTTP_X_AUTH_TOKEN' => user.api_key} }
@@ -13,7 +12,7 @@ describe 'Consumers' do
     it 'returns all the organizations consumers' do
       last_response.status.should == 200
       consumer_data = JSON.parse(last_response.body)
-      consumer_data.count.should == 1 
+      consumer_data.count.should == org.consumers.count
     end
   end
 
@@ -67,7 +66,7 @@ describe 'Consumers' do
         last_response.status.should == 201
         data = JSON.parse(last_response.body)
         c = Consumer.find(data['id'])
-        c.name.should == consumer[:name]
+        c.name.should == consumer_data.name
       end
     end
 

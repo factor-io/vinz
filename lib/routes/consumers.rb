@@ -2,7 +2,7 @@ class Vinz < Sinatra::Base
 
   get '/consumers' do
     auth_user
-    @user.organization.consumers.to_json
+    @user.organization.consumers.to_json(include: :groups)
   end
 
   get '/consumers/:id' do
