@@ -60,7 +60,33 @@ describe 'Config Items' do
   end
 
   describe 'POST /config_items' do
-    it 'should be implemented'
+    let(:item_data) { FactoryGirl.build(:config_item) }
+
+    describe 'when data is valid' do
+      before do
+        item_data.groups = [org.groups.first]
+        post '/config_items', item_data.to_json, 'HTTP_X_AUTH_TOKEN' => org.users.first.api_key
+      end
+
+      it 'stores the item' do
+        last_response.status.should == 201
+        data = JSON.parse(last_response.body)
+        expect { ConfigItem.find(data['id']) }.to_not raise_error
+      end
+    end
+
+    describe 'when data is invalid' do
+      before do
+        item_data.groups = [org.groups.first]
+        item_data.name = nil
+        post '/config_items', item_data.to_json, 'HTTP_X_AUTH_TOKEN' => org.users.first.api_key
+      end
+
+      it 'rejects the request' do
+        last_response.status.should == 400
+      end
+    end
+
   end
 
   describe 'PUT /config_items/:id' do

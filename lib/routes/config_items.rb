@@ -21,14 +21,14 @@ class Vinz < Sinatra::Base
   post '/config_items' do
     auth_user
 
-    #begin
-      #item = ConfigItem.create!(@data)
-    #rescue ActiveRecord::RecordInvalid
-      #halt 400
-    #end
+    begin
+      item = ConfigItem.create!(@data)
+    rescue ActiveRecord::RecordInvalid
+      halt 400
+    end
 
-    #status 201
-    #item.to_json
+    status 201
+    item.to_json
   end
 
   put '/config_items/:id' do
