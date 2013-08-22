@@ -1,4 +1,5 @@
 configure :production do
+  use Rack::SSL
   db = URI.parse(ENV['DATABASE_URL'] || 'postgres:///localhost/vinz')
 
   ActiveRecord::Base.establish_connection(

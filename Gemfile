@@ -5,6 +5,7 @@ gem 'sinatra', '1.4.3'
 gem 'activerecord'
 gem 'sinatra-activerecord'
 gem 'activesupport'
+gem 'rack-ssl'
 
 group :production do
   gem 'pg'
