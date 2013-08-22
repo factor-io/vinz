@@ -3,7 +3,7 @@ class CreateConfigItems < ActiveRecord::Migration
     create_table :config_items do |t|
       t.integer :organization_id
       t.string :name
-      t.string :value
+      t.text :value
       t.timestamps
     end
   end

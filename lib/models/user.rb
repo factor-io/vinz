@@ -3,6 +3,9 @@ class User < ActiveRecord::Base
   belongs_to :organization, dependent: :destroy
   has_one :api_key, as: :key_owner
 
+  # Encrypted fields
+  crypt_keeper :password, encryptor: :aes, key: ENV['ENCRYPTION_KEY']
+
   # Named scopes
   scope :admins, -> { where(role: 'admin') }
 

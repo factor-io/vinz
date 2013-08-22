@@ -13,6 +13,7 @@ configure :production do
 end
 
 configure :development do
+  ENV['ENCRYPTION_KEY'] ||= 'USE AN ENVIRONMENT VAR HERE'
   set :database, 'sqlite:///vinz-dev.db'
 end
 

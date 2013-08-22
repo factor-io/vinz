@@ -23,7 +23,7 @@ ActiveRecord::Schema.define(version: 20130821213909) do
   create_table "config_items", force: true do |t|
     t.integer  "organization_id"
     t.string   "name"
-    t.string   "value"
+    t.text     "value"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -44,7 +44,7 @@ ActiveRecord::Schema.define(version: 20130821213909) do
   create_table "users", force: true do |t|
     t.integer  "organization_id"
     t.string   "username"
-    t.string   "password"
+    t.text     "password"
     t.string   "role"
     t.datetime "created_at"
     t.datetime "updated_at"
