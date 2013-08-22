@@ -21,6 +21,13 @@ class Vinz < Sinatra::Base
 
   post '/users' do
     auth_admin
+    if @user.super_admin?
+      halt 400 if @data['organization_id'].nil?
+    else
+      @data['organization_id'] ||= @user.organization.id
+      halt 401 if @data['organization_id'] != @user.organization.id
+    end
+    @data.extract!(%w{username password role})
 
     begin
       user = User.create!(@data)
@@ -34,6 +41,7 @@ class Vinz < Sinatra::Base
 
   put '/users/:id' do
     auth_admin
+    @data.extract!(%w{username password role})
 
     begin
       user = User.find(params[:id])

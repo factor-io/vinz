@@ -48,15 +48,95 @@ describe 'Users' do
   end
 
   describe 'POST /users' do
-    it 'should be implemented'
+    let(:user_data) { FactoryGirl.build(:user) }
+    let!(:num_users) { org.users.count }
+
+    describe 'when data is valid' do
+      before do
+        user_data.organization = nil
+        post '/users', user_data.to_json, 'HTTP_X_AUTH_TOKEN' => admin.api_key.key
+      end
+
+      it 'creates the user' do
+        last_response.status.should == 201
+        data = JSON.parse(last_response.body)
+        expect { User.find(data['id']) }.to_not raise_error
+        org.reload.users.count.should == num_users + 1
+      end
+    end
+
+    describe 'when data is invalid' do
+      before do
+        user_data.organization = nil
+        user_data.username = nil
+        post '/users', user_data.to_json, 'HTTP_X_AUTH_TOKEN' => admin.api_key.key
+      end
+
+      it 'rejects the request' do
+        last_response.status.should == 400
+        org.reload.users.count.should == num_users
+      end
+    end
   end
 
   describe 'PUT /users/:id' do
-    it 'should be implemented'
+    let(:user) { org.users.first }
+    let(:new_name) { 'new_guy' }
+    before { user.username = new_name }
+
+    describe 'when user exists' do
+      describe 'and data is valid' do
+        before { put "/users/#{user.id}", user.to_json, 'HTTP_X_AUTH_TOKEN' => admin.api_key.key }
+
+        it 'updates the user' do
+          last_response.status.should == 200
+          user.reload.username.should == new_name
+        end
+      end
+
+      describe 'but data is invalid' do
+        before do
+          user.username = ''
+          put "/users/#{user.id}", user.to_json, 'HTTP_X_AUTH_TOKEN' => admin.api_key.key
+        end
+
+        it 'rejects the request' do
+          last_response.status.should == 400
+          user.reload.username.should_not == new_name
+        end
+      end
+    end
+
+    describe 'when user does not exist' do
+      before { put "/users/nonexistent", user.to_json, 'HTTP_X_AUTH_TOKEN' => admin.api_key.key }
+
+      it 'returns 404' do
+        last_response.status.should == 404
+        user.reload.username.should_not == new_name
+      end
+    end
   end
 
   describe 'DELETE /users/:id' do
-    it 'should be implemented'
+    let(:user) { org.users.first }
+
+    describe 'when user exists' do
+      before { delete "/users/#{user.id}", nil, 'HTTP_X_AUTH_TOKEN' => admin.api_key.key }
+
+      it 'deletes the user' do
+        last_response.status.should == 200
+        expect { user.reload }.to raise_error
+      end
+    end
+
+    describe 'when user does not exist' do
+      before { delete "/users/nonexistent", nil, 'HTTP_X_AUTH_TOKEN' => admin.api_key.key }
+
+      it 'rejects the request' do
+        last_response.status.should == 404
+        expect { user.reload }.to_not raise_error
+      end
+    end
   end
 
 end
