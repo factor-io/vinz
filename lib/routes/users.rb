@@ -1,8 +1,10 @@
+require 'active_support/core_ext/hash/except'
+
 class Vinz < Sinatra::Base
 
   get '/users' do
     auth_admin
-    @user.organization.users.all.to_json
+    @user.organization.users.to_json
   end
 
   get '/users/:id' do
@@ -14,7 +16,7 @@ class Vinz < Sinatra::Base
     rescue ActiveRecord::RecordNotFound
       halt 404
     end
-    user.to_json
+    user.to_json(except: :password)
   end
 
   post '/users' do
