@@ -11,6 +11,11 @@ end
 class Vinz < Sinatra::Base
   helpers Sinatra::Vinz::Helpers
 
+  register Sinatra::API::Organizations
+  register Sinatra::API::Users
+  register Sinatra::API::Consumers
+  register Sinatra::API::ConfigItems
+
   set(:methods) do |*methods|
     methods = [methods].flatten
     condition { methods.include?(request.request_method.upcase) }
