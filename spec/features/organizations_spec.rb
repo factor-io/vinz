@@ -17,9 +17,9 @@ describe 'Organizations' do
   end
 
   describe 'GET /organizations/:id' do
+    let(:org) { FactoryGirl.create :organization }
 
     describe 'when organization exists' do
-      let(:org) { FactoryGirl.create :organization }
       before { get "/organizations/#{org.id}", nil, {'HTTP_X_AUTH_TOKEN' => super_admin.api_key.key} }
 
       it 'should return the org data' do
@@ -30,7 +30,11 @@ describe 'Organizations' do
     end
 
     describe 'when organization does not exist' do
-      it 'should return 404'
+      before { get "/organizations/nonexistent", nil, {'HTTP_X_AUTH_TOKEN' => super_admin.api_key.key} }
+
+      it 'returns a 404' do
+        last_response.status.should == 404
+      end
     end
 
   end
