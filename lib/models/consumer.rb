@@ -1,7 +1,7 @@
 class Consumer < ActiveRecord::Base
   # Associations
-  belongs_to :organization, dependent: :destroy
-  has_one :api_key, as: :key_owner
+  belongs_to :organization
+  has_one :api_key, as: :key_owner, dependent: :destroy
 
   # Validations
   validates_presence_of :organization_id, :name

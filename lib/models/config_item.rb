@@ -1,6 +1,6 @@
 class ConfigItem < ActiveRecord::Base
   # Associations
-  belongs_to :organization, dependent: :destroy
+  belongs_to :organization
 
   # Encrypted fields
   crypt_keeper :value, encryptor: :aes, key: ENV['ENCRYPTION_KEY']

@@ -1,7 +1,7 @@
 class User < ActiveRecord::Base
   # Associations
-  belongs_to :organization, dependent: :destroy
-  has_one :api_key, as: :key_owner
+  belongs_to :organization
+  has_one :api_key, as: :key_owner, dependent: :destroy
 
   # Encrypted fields
   crypt_keeper :password, encryptor: :aes, key: ENV['ENCRYPTION_KEY']
