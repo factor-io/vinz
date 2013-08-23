@@ -10,6 +10,6 @@ RSpec.configure do |config|
   FactoryGirl.find_definitions
 
   def app
-    Vinz
+    VinzAPI
   end
 end

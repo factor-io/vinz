@@ -1,0 +1,36 @@
+%header
+  %h1 #{organization.name}
+  %p Hi, #{user.username}
+  = link_to 'Log out', '/logout', method: :post
+
+#config-items
+  %h2 Config Items
+  %div
+    - config_items.each do |item|
+      %div
+        %form(action="/config_items/#{item.id}" method="post" name="config_item_#{item.id}" style="display:inline")
+          = csrf_tag
+          %input(type="hidden" name="_method" value="put")
+          %input(type="text" name="config_items[#{item.id}][name]" value="#{item.name}")
+          %input(type="text" name="config_items[#{item.id}][value]" value="#{item.value}")
+          %a(href='javascript: document.forms[\"config_item_#{item.id}\"].submit()') Update
+        %span= delete_link(item)
+    %form(action="/config_items" method="post" name="new_config_item")
+      = csrf_tag
+      %input(type="text" name="config_item[name]")
+      %input(type="text" name="config_item[value]")
+      %input(type="submit" value="New Item")
+
+
+#consumers
+  %h2 Consumers
+  %table
+    %th
+      %td Name
+      %td API Key
+    - consumers.each do |consumer|
+      %tr
+        %td= consumer.name
+        %td= consumer.api_key.key
+        %td= edit_link(consumer)
+        %td= delete_link(consumer)

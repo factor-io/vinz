@@ -7,6 +7,9 @@ gem 'sinatra-activerecord'
 gem 'activesupport'
 gem 'rack-ssl'
 gem 'crypt_keeper'
+gem 'haml'
+gem 'rack_csrf'
+gem 'rack-flash3'
 
 group :production do
   gem 'pg'
@@ -18,4 +21,5 @@ group :test, :development do
   gem 'rack-test', '0.6.2'
   gem 'factory_girl'
   gem 'debugger'
+  gem 'shotgun'
 end

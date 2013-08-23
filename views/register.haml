@@ -1,0 +1,17 @@
+%h1 Register
+= flash[:error].gsub("\n", "<br />") if flash[:error]
+%form(action='/register' method='post')
+  = csrf_tag
+  %label
+    Organization name
+    %input(type='text' name='organization[name]' value='#{params['organization'] ? params['organization']['name'] : ''}')
+  %label
+    Username
+    %input(type='text' name='user[username]' value='#{params['user[username]']}')
+  %label
+    Password
+    %input(type='password' name='user[password]')
+  %label
+    Confirm password
+    %input(type='password' name='confirm_password')
+  %input(type='submit' value='Register')
