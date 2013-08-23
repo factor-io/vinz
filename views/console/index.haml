@@ -1,39 +1,62 @@
-%header
-  %h1 #{organization.name}
-  %p Hi, #{user.username}
-  = link_to 'Log out', '/logout', method: :post
+%header.navbar.navbar-inverse.navbar-fixed-top
+  .container
+    .navbar-header
+      %a.navbar-brand(href="/") Vinz
+    .collapse.navbar-collapse
+      %ul.nav.navbar-nav
+        %li= link_to '', '/logout', method: :post, class: 'glyphicon glyphicon-log-out'
 
-#config-items
-  %h2 Config Items
-  %div
+%p Hi, #{user.username}
+
+.container
+  .page-header
+    %h1 #{organization.name}
+  #config-items
+    %h2 Config Items
     - config_items.each do |item|
-      %div
-        %form(action="/config_items/#{item.id}" method="post" name="config_item_#{item.id}" style="display:inline")
+      .row
+        .col-md-6
+          %form.form-inline(action="/config_items/#{item.id}" method="post" name="config_item_#{item.id}" style="display:inline")
+            = csrf_tag
+            %input(type="hidden" name="_method" value="put")
+            .form-group
+              %input.form-control(type="text" name="config_items[#{item.id}][name]" value="#{item.name}")
+            .form-group
+              %input.form-control(type="text" name="config_items[#{item.id}][value]" value="#{item.value}")
+            .form-group
+              %a(href='javascript: document.forms[\"config_item_#{item.id}\"].submit()') Update
+          %span= delete_link(item)
+    .row
+      .col-md-6
+        %form.form-inline(action="/config_items" method="post" name="new_config_item")
           = csrf_tag
-          %input(type="hidden" name="_method" value="put")
-          %input(type="text" name="config_items[#{item.id}][name]" value="#{item.name}")
-          %input(type="text" name="config_items[#{item.id}][value]" value="#{item.value}")
-          %a(href='javascript: document.forms[\"config_item_#{item.id}\"].submit()') Update
-        %span= delete_link(item)
-    %form(action="/config_items" method="post" name="new_config_item")
-      = csrf_tag
-      %input(type="text" name="config_item[name]")
-      %input(type="text" name="config_item[value]")
-      %input(type="submit" value="New Item")
+          .form-group
+            %input.form-control(type="text" name="config_item[name]")
+          .form-group
+            %input.form-control(type="text" name="config_item[value]")
+          .form-group
+            %input.btn.btn-default(type="submit" value="New Item")
 
-#consumers
-  %h2 Consumers
-  %div
+  #consumers
+    %h2 Consumers
     - consumers.each do |consumer|
-      %div
-        %form(action="/consumers/#{consumer.id}" method="post" name="consumer_#{consumer.id}" style="display:inline")
-          = csrf_tag
-          %input(type="hidden" name="_method" value="put")
-          %input(type="text" name="consumers[#{consumer.id}][name]" value="#{consumer.name}")
-          %span.key= consumer.api_key.key
-          %a(href='javascript: document.forms[\"consumer_#{consumer.id}\"].submit()') Update
-        %span= delete_link(consumer)
-    %form(action="/consumers" method="post" name="new_consumer")
-      = csrf_tag
-      %input(type="text" name="consumer[name]")
-      %input(type="submit" value="New Consumer")
+      .row
+        .col-md-6
+          %form.form-inline(action="/consumers/#{consumer.id}" method="post" name="consumer_#{consumer.id}" style="display:inline")
+            = csrf_tag
+            %input(type="hidden" name="_method" value="put")
+            .form-group
+              %input.form-control(type="text" name="consumers[#{consumer.id}][name]" value="#{consumer.name}")
+            .form-group
+              %span.key= consumer.api_key.key
+            .form-group
+              %a(href='javascript: document.forms[\"consumer_#{consumer.id}\"].submit()') Update
+          %span= delete_link(consumer)
+      .row
+        .col-md-6
+          %form.form-inline(action="/consumers" method="post" name="new_consumer")
+            = csrf_tag
+            .form-group
+              %input.form-control(type="text" name="consumer[name]")
+            .form-group
+              %input.btn.btn-default(type="submit" value="New Consumer")

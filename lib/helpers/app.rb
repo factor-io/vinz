@@ -14,17 +14,18 @@ module Sinatra
         _method = options[:method].to_s || 'get'
         method = 'get'
         method = 'post' unless _method == 'get'
+        klass = options[:class] || ''
         <<-eos
           <form name='#{id}' method='#{method}' action='#{action}' style="display:inline">
             #{csrf_tag}
             <input type="hidden" name="_method" value="#{_method}" />
-            <a href='javascript: document.forms[\"#{id}\"].submit()'>#{text}</a>
           </form>
+          <a href='javascript: document.forms[\"#{id}\"].submit()' class="#{klass}">#{text}</a>
         eos
       end
 
-      def delete_link(resource)
-        link_to('Delete', "/#{resource.class.to_s.underscore.pluralize}/#{resource.id}", method: :delete)
+      def delete_link(resource, options={})
+        link_to('Delete', "/#{resource.class.to_s.underscore.pluralize}/#{resource.id}", options.merge(method: :delete))
       end
 
       def login(user)
