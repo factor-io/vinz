@@ -1,7 +1,7 @@
 require 'json'
 
 module Sinatra
-  module Vinz
+  module API
     module Helpers
 
       def get_user(token)

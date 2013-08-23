@@ -21,16 +21,19 @@
       %input(type="text" name="config_item[value]")
       %input(type="submit" value="New Item")
 
-
 #consumers
   %h2 Consumers
-  %table
-    %th
-      %td Name
-      %td API Key
+  %div
     - consumers.each do |consumer|
-      %tr
-        %td= consumer.name
-        %td= consumer.api_key.key
-        %td= edit_link(consumer)
-        %td= delete_link(consumer)
+      %div
+        %form(action="/consumers/#{consumer.id}" method="post" name="consumer_#{consumer.id}" style="display:inline")
+          = csrf_tag
+          %input(type="hidden" name="_method" value="put")
+          %input(type="text" name="consumers[#{consumer.id}][name]" value="#{consumer.name}")
+          %span.key= consumer.api_key.key
+          %a(href='javascript: document.forms[\"consumer_#{consumer.id}\"].submit()') Update
+        %span= delete_link(consumer)
+    %form(action="/consumers" method="post" name="new_consumer")
+      = csrf_tag
+      %input(type="text" name="consumer[name]")
+      %input(type="submit" value="New Consumer")
