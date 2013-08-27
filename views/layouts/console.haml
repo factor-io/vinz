@@ -3,9 +3,17 @@
   %head
     %title Vinz - The Keymaster
     %link(rel="stylesheet" type="text/css" href="/css/bootstrap.min.css")
+    %link(rel="stylesheet" type="text/css" href="/css/bootstrap-theme.min.css")
     %link(rel="stylesheet" type="text/css" href="/css/console.css")
 
   %body
     = yield
-    %script(src="//code.jquery.com/jquery.js")
+    %script(src="/js/jquery-2.0.3.min.js")
     %script(src="/js/bootstrap.min.js")
+    %script(src="/js/handlebars-1.0.0.js")
+    %script(src="/js/ember-1.0.0-rc.7.js")
+    %script(src="/js/ember-data-0.13.js")
+
+    %script
+      user_api_key = "#{user.api_key.key}"
+    %script(src="/js/console.js")

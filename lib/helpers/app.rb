@@ -16,7 +16,7 @@ module Sinatra
         method = 'post' unless _method == 'get'
         klass = options[:class] || ''
         <<-eos
-          <form name='#{id}' method='#{method}' action='#{action}' style="display:inline">
+          <form name='#{id}' method='#{method}' action='#{action}' style="display:none">
             #{csrf_tag}
             <input type="hidden" name="_method" value="#{_method}" />
           </form>

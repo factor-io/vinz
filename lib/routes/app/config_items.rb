@@ -7,17 +7,38 @@ module Sinatra
           require_login!
 
           errors = []
-          if params['config_item'].nil?
-            errors << 'Invalid config item.'
-          elsif params['config_item']['name'].blank?
-            errors << 'Name cannot be empty.'
+          if params['config_items'].nil?
+            errors << 'Invalid config items.'
           end
 
           if errors.empty?
-            begin
-              @user.organization.config_items.create(params['config_item'])
-            rescue ActiveRecord::RecordInvalid
-              errors << "Error creating config item."
+            params['config_items'].each do |item_params|
+              if item_params['id'].nil?
+                unless item_params['name'].nil?
+                  @user.organization.config_items.create(item_params)
+                end
+              else
+                begin
+                  item = ConfigItem.find(item_params['id'])
+                rescue ActiveRecord::RecordNotFound
+                  item = nil
+                end
+
+                unless item.nil?
+                  unless item.organization != @user.organization
+                    if item_params['_delete'] == 'true'
+                      item.destroy
+                    else
+                      item_params.delete('_delete')
+                      begin
+                        item.update_attributes(item_params)
+                      rescue ActiveRecord::RecordInvalid
+                        errors << "Could not update #{item_params.name}"
+                      end
+                    end
+                  end
+                end
+              end
             end
           end
 

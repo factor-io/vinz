@@ -14,7 +14,7 @@ module Sinatra
 
       def get_consumer(token)
         key = ApiKey.find_by_key(token)
-        halt 401 if key.nil? || key.key_owner.class != Consumer
+        halt 401 if key.nil?
         key.key_owner
       end
 

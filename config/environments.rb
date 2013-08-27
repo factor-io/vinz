@@ -1,3 +1,7 @@
+configure do
+  ENV['ENCRYPTION_KEY'] ||= 'USE AN ENVIRONMENT VAR HERE'
+end
+
 configure :production do
   use Rack::SSL
   db = URI.parse(ENV['DATABASE_URL'] || 'postgres:///localhost/vinz')
@@ -13,7 +17,6 @@ configure :production do
 end
 
 configure :development do
-  ENV['ENCRYPTION_KEY'] ||= 'USE AN ENVIRONMENT VAR HERE'
   set :database, 'sqlite:///vinz-dev.db'
 end
 

@@ -5,7 +5,7 @@ module Sinatra
       def self.registered(app)
         app.get '/consumers' do
           auth_user
-          @user.organization.consumers.to_json()
+          {'consumers' => @user.organization.consumers}.to_json()
         end
 
         app.get '/consumers/:id' do
@@ -17,7 +17,7 @@ module Sinatra
           rescue ActiveRecord::RecordNotFound
             halt 404
           end
-          consumer.to_json
+          consumer.to_json(root: true)
         end
 
         app.post '/consumers' do

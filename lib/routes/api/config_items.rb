@@ -7,7 +7,8 @@ module Sinatra
       def self.registered(app)
         app.get '/config_items' do
           auth_consumer
-          @consumer.organization.config_items.to_json()
+          {'config_items' => @consumer.organization.config_items}.to_json
+          #@consumer.organization.config_items.to_json(root: true)
         end
 
         app.get '/config_items/:id' do
@@ -20,7 +21,7 @@ module Sinatra
             halt 404
           end
 
-          item.to_json
+          item.to_json(root: true)
         end
 
         app.post '/config_items' do
@@ -31,10 +32,12 @@ module Sinatra
             @data['organization_id'] ||= @user.organization.id
             halt 401 if @data['organization_id'] != @user.organization.id
           end
-          @data.extract!(%w{name value})
+
+          item_data = @data['config_item']
+          item_data.extract!(%w{name value})
 
           begin
-            item = ConfigItem.create!(@data)
+            item = ConfigItem.create!(item_data)
           rescue ActiveRecord::RecordInvalid
             halt 400
           end
@@ -45,19 +48,20 @@ module Sinatra
 
         app.put '/config_items/:id' do
           auth_user
-          @data.extract!(%w{name value})
+          item_data = @data['config_item']
+          item_data.extract!(%w{name value})
           
           begin
             item = ConfigItem.find(params[:id])
             verify_ownership(@user, item)
-            item.update_attributes!(@data)
+            item.update_attributes!(item_data)
           rescue ActiveRecord::RecordNotFound
             halt 404
           rescue ActiveRecord::RecordInvalid
             halt 400
           end
 
-          item.to_json
+          item.to_json(root: true)
         end
 
         app.delete '/config_items/:id' do

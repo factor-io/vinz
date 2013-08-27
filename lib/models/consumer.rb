@@ -10,6 +10,13 @@ class Consumer < ActiveRecord::Base
   # Callbacks
   before_create :generate_api_key
 
+  # Override as_json
+  def as_json(options = {})
+    hash = serializable_hash(options)
+    hash[:api_key] = api_key.key
+    hash
+  end
+
   protected
 
   def generate_api_key

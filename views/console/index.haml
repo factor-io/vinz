@@ -1,62 +1,181 @@
-%header.navbar.navbar-inverse.navbar-fixed-top
-  .container
-    .navbar-header
-      %a.navbar-brand(href="/") Vinz
-    .collapse.navbar-collapse
-      %ul.nav.navbar-nav
-        %li= link_to '', '/logout', method: :post, class: 'glyphicon glyphicon-log-out'
+%script(type="text/x-handlebars")
+  %header.navbar.navbar-inverse.navbar-fixed-top
+    .container
+      .navbar-header
+        %a.navbar-brand(href="/") Vinz
+      .collapse.navbar-collapse
+        %ul.nav.navbar-nav.navbar-right
+          %li= link_to '', '/logout', method: :post, class: 'glyphicon glyphicon-log-out'
 
-%p Hi, #{user.username}
+  #content.page-header
+    .container
+      %h1= organization.name
+      %p= flash[:error]
 
-.container
-  .page-header
-    %h1 #{organization.name}
-  #config-items
-    %h2 Config Items
-    - config_items.each do |item|
+  #contents
+    {{outlet}}
+
+%script(type="text/x-handlebars" data-template-name="index")
+  {{render 'config_items' config_items}}
+  {{render 'consumers' consumers}}
+
+%script(type="text/x-handlebars" data-template-name="config_items")
+  #configs
+    .container
       .row
-        .col-md-6
-          %form.form-inline(action="/config_items/#{item.id}" method="post" name="config_item_#{item.id}" style="display:inline")
-            = csrf_tag
-            %input(type="hidden" name="_method" value="put")
-            .form-group
-              %input.form-control(type="text" name="config_items[#{item.id}][name]" value="#{item.name}")
-            .form-group
-              %input.form-control(type="text" name="config_items[#{item.id}][value]" value="#{item.value}")
-            .form-group
-              %a(href='javascript: document.forms[\"config_item_#{item.id}\"].submit()') Update
-          %span= delete_link(item)
-    .row
-      .col-md-6
-        %form.form-inline(action="/config_items" method="post" name="new_config_item")
-          = csrf_tag
-          .form-group
-            %input.form-control(type="text" name="config_item[name]")
-          .form-group
-            %input.form-control(type="text" name="config_item[value]")
-          .form-group
-            %input.btn.btn-default(type="submit" value="New Item")
+        .col-md-8
+          %h2 Configs
+          %table.table.table-striped
+            %thead
+              %tr
+                %th ID
+                %th Name
+                %th Value
+                %th
+            %tbody
+              {{#each item in controller}}
+              %tr
+                %td.col-md-1 {{item.id}}
+                %td.col-md-3
+                  {{view App.ContentEditable valueBinding="item.name"}}
+                %td.col-md-3
+                  {{view App.ContentEditable valueBinding="item.value"}}
+                %td.col-md-1
+              {{/each}}
+              %tr
+                %td
+                %td {{view Ember.TextField id="new-config-item" placeholder="Name" valueBinding="newName" action="createConfigItem"}}
+                %td
+                %td
 
+%script(type="text/x-handlebars" data-template-name="content-editable")
+  {{#if view.editMode}}
+  .input-group.input-group-sm
+    {{view App.TextField editModeBinding="view.editMode" valueBinding="view.value"}}
+  {{else}}
+  {{view.value}}
+  {{/if}}
+
+%script(type="text/x-handlebars" data-template-name="consumers")
   #consumers
-    %h2 Consumers
-    - consumers.each do |consumer|
+    .container
       .row
-        .col-md-6
-          %form.form-inline(action="/consumers/#{consumer.id}" method="post" name="consumer_#{consumer.id}" style="display:inline")
-            = csrf_tag
-            %input(type="hidden" name="_method" value="put")
-            .form-group
-              %input.form-control(type="text" name="consumers[#{consumer.id}][name]" value="#{consumer.name}")
-            .form-group
-              %span.key= consumer.api_key.key
-            .form-group
-              %a(href='javascript: document.forms[\"consumer_#{consumer.id}\"].submit()') Update
-          %span= delete_link(consumer)
-      .row
-        .col-md-6
-          %form.form-inline(action="/consumers" method="post" name="new_consumer")
-            = csrf_tag
-            .form-group
-              %input.form-control(type="text" name="consumer[name]")
-            .form-group
-              %input.btn.btn-default(type="submit" value="New Consumer")
+        .col-md-8
+          %h2 Consumers
+          %table.table.table-striped
+            %thead
+              %tr
+                %th ID
+                %th Name
+                %th API Key
+                %th
+            %tbody
+              {{#each controller}}
+              %tr
+                %td {{id}}
+                %td {{name}}
+                %td {{apiKey}}
+                %td
+              {{/each}}
+
+
+  -#- if user.admin?
+    -##users
+      -#%h2 Users
+      -#.row
+        -#.col-md-6
+          -#%table.table.table-striped
+            -#%thead
+              -#%tr
+                -#%th ID
+                -#%th Username
+                -#%th Role
+                -#%th API Key
+                -#%th
+            -#%tbody
+              -#- organization.users.each do |u|
+                -#%tr
+                  -#%td= u.id
+                  -#%td= u.username
+                  -#%td= u.role
+                  -#%td= u.api_key.key
+                  -#%td= delete_link(u)
+
+
+  -##config-items
+    -#%h2 Config Items
+    -#.row
+      -#.col-md-6
+        -#%form(action="/config_items" method="post" name="config_items_form")
+          -#= csrf_tag
+          -#%table.table.table-striped
+            -#%thead
+              -#%tr
+                -#%th ID
+                -#%th Name
+                -#%th Value
+                -#%th
+            -#%tbody.edit-list
+              -#- config_items.each do |item|
+                -#%tr.edit-item
+                  -#%input(type="hidden" name="config_items[][id]" value="#{item.id}")
+                  -#%input(type="hidden" name="config_items[][_delete]" class="delete-input" value="false")
+                  -#%td= item.id
+                  -#%td
+                    -#.input-group.input-group-sm
+                      -#%input.form-control(type="text" placeholder="Name" name="config_items[][name]" value="#{item.name}")
+                  -#%td
+                    -#.input-group.input-group-sm
+                      -#%input.form-control(type="text" placeholder="Value" name="config_items[][value]" value="#{item.value}")
+                  -#%td
+                    -#%a(href="#" class="glyphicon remove-ctrl")
+              -#%tr.new-item
+                -#%td
+                -#%td
+                  -#.input-group.input-group-sm
+                    -#%input.form-control(type="text" placeholder="Name" name="config_items[][name]")
+                -#%td
+                  -#.input-group.input-group-sm
+                    -#%input.form-control(type="text" placeholder="Value" name="config_items[][value]")
+                -#%td
+                  -#%a(href="#" class="glyphicon add-ctrl")
+          -#%input.btn.btn-primary(type="submit" value="Save")
+
+  -##consumers
+    -#%h2 Consumers
+    -#.row
+      -#.col-md-6
+        -#%table.table.table-striped
+          -#%thead
+            -#%tr
+              -#%th ID
+              -#%th Name
+              -#%th API Key
+              -#%th
+          -#%tbody
+            -#- consumers.each do |consumer|
+              -#%tr
+                -#%td= consumer.id
+                -#%td= consumer.name
+                -#%td= consumer.api_key.key
+                -#%td= delete_link(consumer)
+              -#-#.row
+                -#-#.col-md-6
+                  -#-#%form.form-inline(action="/consumers/#{consumer.id}" method="post" name="consumer_#{consumer.id}" style="display:inline")
+                    -#-#= csrf_tag
+                    -#-#%input(type="hidden" name="_method" value="put")
+                    -#-#.form-group
+                      -#-#%input.form-control(type="text" name="consumers[#{consumer.id}][name]" value="#{consumer.name}")
+                    -#-#.form-group
+                      -#-#%span.key= consumer.api_key.key
+                    -#-#.form-group
+                      -#-#%a(href='javascript: document.forms[\"consumer_#{consumer.id}\"].submit()') Update
+                  -#-#%span= delete_link(consumer)
+              -#-#.row
+                -#-#.col-md-6
+                  -#-#%form.form-inline(action="/consumers" method="post" name="new_consumer")
+                    -#-#= csrf_tag
+                    -#-#.form-group
+                      -#-#%input.form-control(type="text" name="consumer[name]")
+                    -#-#.form-group
+                      -#-#%input.btn.btn-default(type="submit" value="New Consumer")

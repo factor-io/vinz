@@ -24,6 +24,12 @@ class User < ActiveRecord::Base
     role == 'admin' || role == 'super_admin'
   end
 
+  def as_json(options = {})
+    hash = serializable_hash(options)
+    hash[:api_key] = api_key.key
+    hash
+  end
+
   protected
 
   def generate_api_key
