@@ -18,10 +18,25 @@ App.Router.map(function () {
   this.resource('users');
 });
 
+/* ===== Models ===== */
+
 App.ConfigItem = DS.Model.extend({
   name: DS.attr('string'),
   value: DS.attr('string')
 });
+
+App.Consumer = DS.Model.extend({
+  name: DS.attr('string'),
+  apiKey: DS.attr('string')
+});
+
+App.User = DS.Model.extend({
+  username: DS.attr('string'),
+  role: DS.attr('string'),
+  apiKey: DS.attr('string')
+});
+
+/* ===== Controllers ===== */
 
 App.IndexController = Ember.ArrayController.extend({
   save: function(event) {
@@ -31,7 +46,6 @@ App.IndexController = Ember.ArrayController.extend({
 
 App.ConfigItemsController = Ember.ArrayController.extend({
   save: function(event) {
-    console.log('Saving (ConfigItems)', event);
     this.get('store').commit();
   },
 
@@ -60,6 +74,66 @@ App.ConfigItemController = Ember.ObjectController.extend({
     this.get('store').commit();
   }
 });
+
+App.ConsumersController = Ember.ArrayController.extend({
+  save: function(event) {
+    this.get('store').commit();
+  },
+
+  createConsumer: function() {
+    var name = this.get('newName');
+    var consumer = App.Consumer.createRecord({
+      name: name
+    });
+
+    this.set('newName', '');
+
+    consumer.save();
+  },
+
+  removeConsumer: function(consumer) {
+    consumer.deleteRecord();
+    consumer.save();
+  }
+});
+
+App.ConsumerController = Ember.ObjectController.extend({
+  save: function(event) {
+    this.get('store').commit();
+  }
+});
+
+App.UsersController = Ember.ArrayController.extend({
+  save: function(event) {
+    this.get('store').commit();
+  },
+
+  createUser: function() {
+    var username = this.get('newUsername');
+    var user = App.User.createRecord({
+      username: username
+    });
+
+    this.set('newUsername', '');
+
+    user.save();
+  },
+
+  removeUser: function(user) {
+    user.deleteRecord();
+    user.save();
+  }
+});
+
+App.UserController = Ember.ObjectController.extend({
+  save: function(event) {
+    this.get('store').commit();
+  }
+});
+
+
+
+/* ===== Views ===== */
 
 App.TextField = Ember.TextField.extend({
   classNames: ['form-control'],
@@ -90,21 +164,15 @@ App.ContentEditable = Ember.View.extend({
   templateName: 'content-editable'
 });
 
-App.Consumer = DS.Model.extend({
-  name: DS.attr('string'),
-  apiKey: DS.attr('string')
-});
-
-App.User = DS.Model.extend({
-  username: DS.attr('string'),
-  apiKey: DS.attr('string')
-});
-
+/* ===== Routes ===== */
 
 App.IndexRoute = Ember.Route.extend({
   setupController: function(controller) {
     controller.set('config_items', App.ConfigItem.find());
     controller.set('consumers', App.Consumer.find());
+    if (user_admin === true) {
+      controller.set('users', App.User.find());
+    }
   }
 });
 
@@ -120,33 +188,8 @@ App.ConsumersRoute = Ember.Route.extend({
   }
 });
 
-
-var addItem = function(ctrl) {
-  var item = $(ctrl).parents('.new-item');
-  var new_item = item.clone();
-  var list = $(item).parents('.edit-list');
-
-  list.append(new_item);
-  new_item.find('.add-ctrl').on('click', function() { addItem(this) });
-
-  $(ctrl).off();
-  $(ctrl).on('click', function() { removeItem(this) });
-
-  item.addClass('edit-item').removeClass('new-item');
-  $(ctrl).removeClass('add-ctrl').addClass('remove-ctrl');
-
-  return false;
-};
-
-var removeItem = function(ctrl) {
-  var item = $(ctrl).parents('.edit-item');
-  var list = $(item).parents('.edit-list');
-
-  item.hide();
-  item.find('.delete-input').val(true);
-
-  return false;
-};
-
-$('.edit-list .edit-item .remove-ctrl').on('click', function() { removeItem(this) });
-$('.edit-list .new-item .add-ctrl').on('click', function() { addItem(this) });
+App.UsersRoute = Ember.Route.extend({
+  model: function() {
+    return App.User.find();
+  }
+});

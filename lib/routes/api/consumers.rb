@@ -22,33 +22,42 @@ module Sinatra
 
         app.post '/consumers' do
           auth_user
-          halt 401 if @data['organization_id'] != @user.organization.id && !@user.super_admin?
+
+          consumer_data = @data['consumer']
+          halt 400 if consumer_data.nil?
+
+          consumer_data['organization_id'] ||= @user.organization.id
+          unless @user.super_admin?
+            halt 401 if consumer_data['organization_id'] != @user.organization.id
+          end
 
           begin
-            consumer = Consumer.create!(@data)
+            consumer = Consumer.create!(consumer_data)
           rescue ActiveRecord::RecordInvalid
             halt 400
           end
 
           status 201
-          consumer.to_json
+          consumer.to_json(root: true)
         end
 
         app.put '/consumers/:id' do
           auth_user
-          halt 401 if @data['organization_id'] != @user.organization.id && !@user.super_admin?
+
+          consumer_data = @data['consumer']
+          consumer_data.extract!(%w{name})
 
           begin
             consumer = Consumer.find(params[:id])
             verify_ownership(@user, consumer)
-            consumer.update_attributes!(@data)
+            consumer.update_attributes!(consumer_data)
           rescue ActiveRecord::RecordNotFound
             halt 404
           rescue ActiveRecord::RecordInvalid
             halt 400
           end
 
-          consumer.to_json
+          consumer.to_json(root: true)
         end
 
         app.delete '/consumers/:id' do

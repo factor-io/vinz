@@ -18,6 +18,7 @@
 %script(type="text/x-handlebars" data-template-name="index")
   {{render 'config_items' config_items}}
   {{render 'consumers' consumers}}
+  {{render 'users' users}}
 
 %script(type="text/x-handlebars" data-template-name="config_items")
   #configs
@@ -35,13 +36,14 @@
             %tbody
               {{#each item in controller}}
               %tr
-                %td.col-md-1 {{item.id}}
+                %td.col-md-1
+                  {{item.id}}
                 %td.col-md-3
                   {{view App.ContentEditable valueBinding="item.name"}}
                 %td.col-md-3
                   {{view App.ContentEditable valueBinding="item.value"}}
                 %td.col-md-1
-                  <a {{action "removeConfigItem" item}} class="glyphicon glyphicon-remove-sign"></button>
+                  <a {{action "removeConfigItem" item}} class="glyphicon glyphicon-remove-sign"></a>
               {{/each}}
               %tr
                 %td
@@ -52,15 +54,8 @@
                   .input-group.input-group-sm
                     {{view Ember.TextField class="form-control" placeholder="Value" valueBinding="newValue"}}
                 %td
-                  <button {{action "createConfigItem"}} class="btn btn-primary">Add Item</button>
+                  <button {{action "createConfigItem"}} class="btn btn-primary"><span class="glyphicon glyphicon-plus-sign"></span> Add Item</button>
 
-%script(type="text/x-handlebars" data-template-name="content-editable")
-  {{#if view.editMode}}
-  .input-group.input-group-sm
-    {{view App.TextField editModeBinding="view.editMode" valueBinding="view.value"}}
-  {{else}}
-  {{view.value}}
-  {{/if}}
 
 %script(type="text/x-handlebars" data-template-name="consumers")
   #consumers
@@ -76,14 +71,75 @@
                 %th API Key
                 %th
             %tbody
-              {{#each controller}}
+              {{#each consumer in controller}}
               %tr
-                %td {{id}}
-                %td {{name}}
-                %td {{apiKey}}
-                %td
+                %td.col-md-1
+                  {{consumer.id}}
+                %td.col-md-3
+                  {{view App.ContentEditable valueBinding="consumer.name"}}
+                %td.col-md-3
+                  {{consumer.apiKey}}
+                %td.col-md-1
+                  <a {{action "removeConsumer" consumer}} class="glyphicon glyphicon-remove-sign"></a>
               {{/each}}
+              %tr
+                %td
+                %td
+                  .input-group.input-group-sm
+                    {{view Ember.TextField class="form-control" placeholder="Name" valueBinding="newName"}}
+                %td
+                %td
+                  <button {{action "createConsumer"}} class="btn btn-primary"><span class="glyphicon glyphicon-plus-sign"></span> Add Consumer</button>
 
+- if user.admin?
+  %script(type="text/x-handlebars" data-template-name="users")
+    #users
+      .container
+        .row
+          .col-md-8
+            %h2 Users
+            %table.table.table-striped
+              %thead
+                %tr
+                  %th ID
+                  %th Name
+                  %th Role
+                  %th API Key
+                  %th
+              %tbody
+                {{#each user in controller}}
+                %tr
+                  %td.col-md-1
+                    {{user.id}}
+                  %td.col-md-2
+                    {{view App.ContentEditable valueBinding="user.username"}}
+                  %td.col-md-1
+                    {{view App.ContentEditable valueBinding="user.role"}}
+                  %td.col-md-3
+                    {{user.apiKey}}
+                  %td.col-md-1
+                    <a {{action "removeUser" user}} class="glyphicon glyphicon-remove-sign"></a>
+                {{/each}}
+                %tr
+                  %td
+                  %td
+                    .input-group.input-group-sm
+                      {{view Ember.TextField class="form-control" placeholder="Name" valueBinding="newName"}}
+                  %td
+                  %td
+                  %td
+                    <button {{action "createUser"}} class="btn btn-primary"><span class="glyphicon glyphicon-plus-sign"></span> Add User</button>
+
+
+
+
+%script(type="text/x-handlebars" data-template-name="content-editable")
+  {{#if view.editMode}}
+  .input-group.input-group-sm
+    {{view App.TextField editModeBinding="view.editMode" valueBinding="view.value"}}
+  {{else}}
+  {{view.value}}
+  {{/if}}
 
   -#- if user.admin?
     -##users
@@ -107,81 +163,3 @@
                   -#%td= u.api_key.key
                   -#%td= delete_link(u)
 
-
-  -##config-items
-    -#%h2 Config Items
-    -#.row
-      -#.col-md-6
-        -#%form(action="/config_items" method="post" name="config_items_form")
-          -#= csrf_tag
-          -#%table.table.table-striped
-            -#%thead
-              -#%tr
-                -#%th ID
-                -#%th Name
-                -#%th Value
-                -#%th
-            -#%tbody.edit-list
-              -#- config_items.each do |item|
-                -#%tr.edit-item
-                  -#%input(type="hidden" name="config_items[][id]" value="#{item.id}")
-                  -#%input(type="hidden" name="config_items[][_delete]" class="delete-input" value="false")
-                  -#%td= item.id
-                  -#%td
-                    -#.input-group.input-group-sm
-                      -#%input.form-control(type="text" placeholder="Name" name="config_items[][name]" value="#{item.name}")
-                  -#%td
-                    -#.input-group.input-group-sm
-                      -#%input.form-control(type="text" placeholder="Value" name="config_items[][value]" value="#{item.value}")
-                  -#%td
-                    -#%a(href="#" class="glyphicon remove-ctrl")
-              -#%tr.new-item
-                -#%td
-                -#%td
-                  -#.input-group.input-group-sm
-                    -#%input.form-control(type="text" placeholder="Name" name="config_items[][name]")
-                -#%td
-                  -#.input-group.input-group-sm
-                    -#%input.form-control(type="text" placeholder="Value" name="config_items[][value]")
-                -#%td
-                  -#%a(href="#" class="glyphicon add-ctrl")
-          -#%input.btn.btn-primary(type="submit" value="Save")
-
-  -##consumers
-    -#%h2 Consumers
-    -#.row
-      -#.col-md-6
-        -#%table.table.table-striped
-          -#%thead
-            -#%tr
-              -#%th ID
-              -#%th Name
-              -#%th API Key
-              -#%th
-          -#%tbody
-            -#- consumers.each do |consumer|
-              -#%tr
-                -#%td= consumer.id
-                -#%td= consumer.name
-                -#%td= consumer.api_key.key
-                -#%td= delete_link(consumer)
-              -#-#.row
-                -#-#.col-md-6
-                  -#-#%form.form-inline(action="/consumers/#{consumer.id}" method="post" name="consumer_#{consumer.id}" style="display:inline")
-                    -#-#= csrf_tag
-                    -#-#%input(type="hidden" name="_method" value="put")
-                    -#-#.form-group
-                      -#-#%input.form-control(type="text" name="consumers[#{consumer.id}][name]" value="#{consumer.name}")
-                    -#-#.form-group
-                      -#-#%span.key= consumer.api_key.key
-                    -#-#.form-group
-                      -#-#%a(href='javascript: document.forms[\"consumer_#{consumer.id}\"].submit()') Update
-                  -#-#%span= delete_link(consumer)
-              -#-#.row
-                -#-#.col-md-6
-                  -#-#%form.form-inline(action="/consumers" method="post" name="new_consumer")
-                    -#-#= csrf_tag
-                    -#-#.form-group
-                      -#-#%input.form-control(type="text" name="consumer[name]")
-                    -#-#.form-group
-                      -#-#%input.btn.btn-default(type="submit" value="New Consumer")

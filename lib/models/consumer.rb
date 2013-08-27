@@ -14,6 +14,7 @@ class Consumer < ActiveRecord::Base
   def as_json(options = {})
     hash = serializable_hash(options)
     hash[:api_key] = api_key.key
+    hash = {consumer: hash} if options[:root] == true
     hash
   end
 

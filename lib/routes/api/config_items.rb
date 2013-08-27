@@ -35,8 +35,6 @@ module Sinatra
             halt 401 if item_data['organization_id'] != @user.organization.id
           end
 
-          item_data.extract!(%w{name value})
-
           begin
             item = ConfigItem.create!(item_data)
           rescue ActiveRecord::RecordInvalid
@@ -49,6 +47,7 @@ module Sinatra
 
         app.put '/config_items/:id' do
           auth_user
+
           item_data = @data['config_item']
           item_data.extract!(%w{name value})
           
