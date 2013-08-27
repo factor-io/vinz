@@ -33,7 +33,25 @@ App.ConfigItemsController = Ember.ArrayController.extend({
   save: function(event) {
     console.log('Saving (ConfigItems)', event);
     this.get('store').commit();
-    //this.get('target.router').transitionTo('posts.index');
+  },
+
+  createConfigItem: function() {
+    var name = this.get('newName');
+    var value = this.get('newValue');
+    var item = App.ConfigItem.createRecord({
+      name: name,
+      value: value
+    });
+
+    this.set('newName', '');
+    this.set('newValue', '');
+
+    item.save();
+  },
+
+  removeConfigItem: function(item) {
+    item.deleteRecord();
+    item.save();
   }
 });
 

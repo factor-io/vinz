@@ -26,14 +26,15 @@ module Sinatra
 
         app.post '/config_items' do
           auth_user
-          if @user.super_admin?
-            halt 400 if @data['organization_id'].nil?
-          else
-            @data['organization_id'] ||= @user.organization.id
-            halt 401 if @data['organization_id'] != @user.organization.id
-          end
 
           item_data = @data['config_item']
+          halt 400 if item_data.nil?
+
+          item_data['organization_id'] ||= @user.organization.id
+          unless @user.super_admin?
+            halt 401 if item_data['organization_id'] != @user.organization.id
+          end
+
           item_data.extract!(%w{name value})
 
           begin
@@ -43,7 +44,7 @@ module Sinatra
           end
 
           status 201
-          item.to_json
+          item.to_json(root: true)
         end
 
         app.put '/config_items/:id' do

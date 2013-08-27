@@ -41,12 +41,18 @@
                 %td.col-md-3
                   {{view App.ContentEditable valueBinding="item.value"}}
                 %td.col-md-1
+                  <a {{action "removeConfigItem" item}} class="glyphicon glyphicon-remove-sign"></button>
               {{/each}}
               %tr
                 %td
-                %td {{view Ember.TextField id="new-config-item" placeholder="Name" valueBinding="newName" action="createConfigItem"}}
                 %td
+                  .input-group.input-group-sm
+                    {{view Ember.TextField class="form-control" placeholder="Name" valueBinding="newName"}}
                 %td
+                  .input-group.input-group-sm
+                    {{view Ember.TextField class="form-control" placeholder="Value" valueBinding="newValue"}}
+                %td
+                  <button {{action "createConfigItem"}} class="btn btn-primary">Add Item</button>
 
 %script(type="text/x-handlebars" data-template-name="content-editable")
   {{#if view.editMode}}
