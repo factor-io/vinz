@@ -28,11 +28,12 @@ describe 'Access control' do
     describe 'when a super admin' do
       before do
         headers = {'HTTP_X_AUTH_TOKEN' => super_admin.api_key.key}
-        get '/organizations', nil, headers
+        org = FactoryGirl.build :organization
+        post '/organizations', org.to_json, headers
       end
 
       it 'should allow access' do
-        last_response.status.should == 200
+        last_response.status.should == 201
       end
     end
 
