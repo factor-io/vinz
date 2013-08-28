@@ -2,6 +2,8 @@ ENV['RACK_ENV'] ||= 'development'
 
 require 'bundler'
 Bundler.require :default, ENV['RACK_ENV'].to_sym
+require 'will_paginate'
+require 'will_paginate/active_record'
 require 'active_support/core_ext'
 
 require_relative 'config/environments'

@@ -5,7 +5,9 @@ module Sinatra
 
         app.get '/organizations' do
           auth_super_admin
-          Organization.all.to_json
+          page = params[:page] || 1
+          Organization.paginate(:page => page, :per_page => 20).to_json
+          #Organization.all.to_json
         end
 
         app.get '/organizations/:id' do

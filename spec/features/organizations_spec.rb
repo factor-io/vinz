@@ -8,10 +8,10 @@ describe 'Organizations' do
     let(:orgs) { Organization.all }
     before { get '/organizations', nil, {'HTTP_X_AUTH_TOKEN' => super_admin.api_key.key} }
 
-    it 'should return all organizations' do
+    it 'should return list of organizations' do
       last_response.status.should == 200
       orgs_data = JSON.parse(last_response.body)
-      orgs_data.count.should == orgs.count
+      orgs_data.count.should == [orgs.count, 20].min
     end
 
   end

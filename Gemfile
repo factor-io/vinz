@@ -10,6 +10,7 @@ gem 'crypt_keeper'
 gem 'haml'
 gem 'rack_csrf'
 gem 'rack-flash3'
+gem 'will_paginate', '~> 3.0.0'
 
 group :production do
   gem 'pg'
