@@ -5,6 +5,7 @@ class CreateConsumers < ActiveRecord::Migration
       t.string :name
       t.timestamps
     end
+    add_index :consumers, :organization_id, name: 'consumers_organization_id_idx'
   end
 
   def down

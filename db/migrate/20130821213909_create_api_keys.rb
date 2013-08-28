@@ -6,6 +6,8 @@ class CreateApiKeys < ActiveRecord::Migration
       t.string :key
       t.timestamps
     end
+    add_index :api_keys, [:key_owner_id, :key_owner_type]
+    add_index :api_keys, :key, name: 'api_keys_key_idx'
   end
 
   def down

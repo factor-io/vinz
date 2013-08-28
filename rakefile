@@ -4,6 +4,7 @@ require 'sinatra/activerecord/rake'
 require 'rspec/core/rake_task'
  
 RSpec::Core::RakeTask.new :specs do |task|
+  task.rspec_opts = "--profile"
   task.pattern = Dir['spec/**/*_spec.rb']
 end
  

@@ -10,7 +10,7 @@ describe 'Users' do
 
     it 'returns the list of users' do
       last_response.status.should == 200
-      data = JSON.parse(last_response.body)
+      data = JSON.parse(last_response.body)['users']
       data.count.should == org.users.count
     end
   end
@@ -22,7 +22,7 @@ describe 'Users' do
 
         it 'returns the user data' do
           last_response.status.should == 200
-          data = JSON.parse(last_response.body)
+          data = JSON.parse(last_response.body)['user']
           data['id'].should == org.users.first.id
           data['username'].should == org.users.first.username
           data['password'].should == nil
@@ -53,13 +53,13 @@ describe 'Users' do
 
     describe 'when data is valid' do
       before do
-        user_data.organization = nil
-        post '/users', user_data.to_json, 'HTTP_X_AUTH_TOKEN' => admin.api_key.key
+        user_data.organization = org
+        post '/users', {user: user_data}.to_json, 'HTTP_X_AUTH_TOKEN' => admin.api_key.key
       end
 
       it 'creates the user' do
         last_response.status.should == 201
-        data = JSON.parse(last_response.body)
+        data = JSON.parse(last_response.body)['user']
         expect { User.find(data['id']) }.to_not raise_error
         org.reload.users.count.should == num_users + 1
       end
@@ -69,7 +69,7 @@ describe 'Users' do
       before do
         user_data.organization = nil
         user_data.username = nil
-        post '/users', user_data.to_json, 'HTTP_X_AUTH_TOKEN' => admin.api_key.key
+        post '/users', {user: user_data}.to_json, 'HTTP_X_AUTH_TOKEN' => admin.api_key.key
       end
 
       it 'rejects the request' do
@@ -86,7 +86,7 @@ describe 'Users' do
 
     describe 'when user exists' do
       describe 'and data is valid' do
-        before { put "/users/#{user.id}", user.to_json, 'HTTP_X_AUTH_TOKEN' => admin.api_key.key }
+        before { put "/users/#{user.id}", {user: user}.to_json, 'HTTP_X_AUTH_TOKEN' => admin.api_key.key }
 
         it 'updates the user' do
           last_response.status.should == 200
@@ -97,7 +97,7 @@ describe 'Users' do
       describe 'but data is invalid' do
         before do
           user.username = ''
-          put "/users/#{user.id}", user.to_json, 'HTTP_X_AUTH_TOKEN' => admin.api_key.key
+          put "/users/#{user.id}", {user: user}.to_json, 'HTTP_X_AUTH_TOKEN' => admin.api_key.key
         end
 
         it 'rejects the request' do
@@ -108,7 +108,7 @@ describe 'Users' do
     end
 
     describe 'when user does not exist' do
-      before { put "/users/nonexistent", user.to_json, 'HTTP_X_AUTH_TOKEN' => admin.api_key.key }
+      before { put "/users/nonexistent", {user: user}.to_json, 'HTTP_X_AUTH_TOKEN' => admin.api_key.key }
 
       it 'returns 404' do
         last_response.status.should == 404

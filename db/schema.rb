@@ -20,6 +20,9 @@ ActiveRecord::Schema.define(version: 20130821213909) do
     t.datetime "updated_at"
   end
 
+  add_index "api_keys", ["key"], name: "api_keys_key_idx"
+  add_index "api_keys", ["key_owner_id", "key_owner_type"], name: "index_api_keys_on_key_owner_id_and_key_owner_type"
+
   create_table "config_items", force: true do |t|
     t.integer  "organization_id"
     t.string   "name"
@@ -28,12 +31,16 @@ ActiveRecord::Schema.define(version: 20130821213909) do
     t.datetime "updated_at"
   end
 
+  add_index "config_items", ["organization_id"], name: "config_items_organization_id_idx"
+
   create_table "consumers", force: true do |t|
     t.integer  "organization_id"
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "consumers", ["organization_id"], name: "consumers_organization_id_idx"
 
   create_table "organizations", force: true do |t|
     t.string   "name"
@@ -49,5 +56,7 @@ ActiveRecord::Schema.define(version: 20130821213909) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "users", ["organization_id"], name: "users_organization_id_idx"
 
 end

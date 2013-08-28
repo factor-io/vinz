@@ -11,7 +11,7 @@ describe 'Consumers' do
 
     it 'returns all the organizations consumers' do
       last_response.status.should == 200
-      consumer_data = JSON.parse(last_response.body)
+      consumer_data = JSON.parse(last_response.body)['consumers']
       consumer_data.count.should == org.consumers.count
     end
   end
@@ -24,7 +24,7 @@ describe 'Consumers' do
 
         it 'returns the consumer data' do
           last_response.status.should == 200
-          consumer_data = JSON.parse(last_response.body)
+          consumer_data = JSON.parse(last_response.body)['consumer']
           consumer_data['name'].should == consumer.name
           consumer_data['id'].should == consumer.id
         end
@@ -59,12 +59,12 @@ describe 'Consumers' do
     describe 'when valid data is sent' do
       before do
         consumer_data.organization = org
-        post '/consumers', consumer_data.to_json, 'HTTP_X_AUTH_TOKEN' => user.api_key.key
+        post '/consumers', {consumer: consumer_data}.to_json, 'HTTP_X_AUTH_TOKEN' => user.api_key.key
       end
 
       it 'stores the data in the DB' do
         last_response.status.should == 201
-        data = JSON.parse(last_response.body)
+        data = JSON.parse(last_response.body)['consumer']
         c = Consumer.find(data['id'])
         c.name.should == consumer_data.name
       end
@@ -74,7 +74,7 @@ describe 'Consumers' do
       let(:num_consumers) { Consumer.count }
       before do
         consumer_data.organization = FactoryGirl.create :organization
-        post '/consumers', consumer_data.to_json, 'HTTP_X_AUTH_TOKEN' => user.api_key.key
+        post '/consumers', {consumer: consumer_data}.to_json, 'HTTP_X_AUTH_TOKEN' => user.api_key.key
       end
 
       it 'rejects the request' do
@@ -90,7 +90,7 @@ describe 'Consumers' do
     describe 'when data is valid' do
       before do
         consumer.name = new_name
-        put "/consumers/#{consumer.id}", consumer.to_json, 'HTTP_X_AUTH_TOKEN' => user.api_key.key
+        put "/consumers/#{consumer.id}", {consumer: consumer}.to_json, 'HTTP_X_AUTH_TOKEN' => user.api_key.key
       end
 
       it 'updates the consumer' do
@@ -102,7 +102,7 @@ describe 'Consumers' do
     describe 'when data is invalid' do
       before do
         consumer.name = nil
-        put "/consumers/#{consumer.id}", consumer.to_json, 'HTTP_X_AUTH_TOKEN' => user.api_key.key
+        put "/consumers/#{consumer.id}", {consumer: consumer}.to_json, 'HTTP_X_AUTH_TOKEN' => user.api_key.key
       end
 
       it 'rejects the request' do
@@ -113,8 +113,8 @@ describe 'Consumers' do
 
     describe 'when user does not have access' do
       before do
-        consumer.organization = FactoryGirl.create(:organization)
-        put "/consumers/#{consumer.id}", consumer.to_json, 'HTTP_X_AUTH_TOKEN' => user.api_key.key
+        consumer = FactoryGirl.create(:consumer)
+        put "/consumers/#{consumer.id}", {consumer: consumer}.to_json, 'HTTP_X_AUTH_TOKEN' => user.api_key.key
       end
 
       it 'rejects the request' do

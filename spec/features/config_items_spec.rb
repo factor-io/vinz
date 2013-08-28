@@ -9,7 +9,7 @@ describe 'Config Items' do
 
     it 'returns all config items consumer has access to' do
       last_response.status.should == 200
-      data = JSON.parse(last_response.body)
+      data = JSON.parse(last_response.body)['config_items']
       data.count.should == org.config_items.count
     end
   end
@@ -23,7 +23,7 @@ describe 'Config Items' do
 
         it 'returns the item data' do
           last_response.status.should == 200
-          data = JSON.parse(last_response.body)
+          data = JSON.parse(last_response.body)['config_item']
           data['name'].should == item.name
           data['id'].should == item.id
         end
@@ -53,12 +53,12 @@ describe 'Config Items' do
 
     describe 'when data is valid' do
       before do
-        post '/config_items', item_data.to_json, 'HTTP_X_AUTH_TOKEN' => org.users.first.api_key.key
+        post '/config_items', {config_item: item_data}.to_json, 'HTTP_X_AUTH_TOKEN' => org.users.first.api_key.key
       end
 
       it 'stores the item' do
         last_response.status.should == 201
-        data = JSON.parse(last_response.body)
+        data = JSON.parse(last_response.body)['config_item']
         expect { ConfigItem.find(data['id']) }.to_not raise_error
       end
     end
@@ -67,7 +67,7 @@ describe 'Config Items' do
       before do
         item_data.organization = nil
         item_data.name = nil
-        post '/config_items', item_data.to_json, 'HTTP_X_AUTH_TOKEN' => org.users.first.api_key.key
+        post '/config_items', {config_item: item_data}.to_json, 'HTTP_X_AUTH_TOKEN' => org.users.first.api_key.key
       end
 
       it 'rejects the request' do
@@ -85,12 +85,12 @@ describe 'Config Items' do
     describe 'when item exists' do
       describe 'and user has access' do
         describe 'and data is valid' do
-          before { put "/config_items/#{item.id}", item.to_json, 'HTTP_X_AUTH_TOKEN' => org.users.first.api_key.key }
+          before { put "/config_items/#{item.id}", {config_item: item}.to_json, 'HTTP_X_AUTH_TOKEN' => org.users.first.api_key.key }
 
           it 'updates the item and returns its attrs' do
             last_response.status.should == 200
             item.reload.value.should == new_value
-            data = JSON.parse(last_response.body)
+            data = JSON.parse(last_response.body)['config_item']
             data['id'].should == item.id
             data['value'].should == item.value
           end
@@ -99,7 +99,7 @@ describe 'Config Items' do
         describe 'but data is invalid' do
           before do
             item.name = nil
-            put "/config_items/#{item.id}", item.to_json, 'HTTP_X_AUTH_TOKEN' => org.users.first.api_key.key
+            put "/config_items/#{item.id}", {config_item: item}.to_json, 'HTTP_X_AUTH_TOKEN' => org.users.first.api_key.key
           end
 
           it 'rejects the request' do
@@ -112,7 +112,7 @@ describe 'Config Items' do
       end
 
       describe 'but user does not have access' do
-        before { put "/config_items/#{item.id}", item.to_json, 'HTTP_X_AUTH_TOKEN' => FactoryGirl.create(:user).api_key.key }
+        before { put "/config_items/#{item.id}", {config_item: item}.to_json, 'HTTP_X_AUTH_TOKEN' => FactoryGirl.create(:user).api_key.key }
 
         it 'rejects the request' do
           last_response.status.should == 401
@@ -122,7 +122,7 @@ describe 'Config Items' do
     end
 
     describe 'when item does not exist' do
-      before { put "/config_items/nonexistent", item.to_json, 'HTTP_X_AUTH_TOKEN' => org.users.first.api_key.key }
+      before { put "/config_items/nonexistent", {config_item: item}.to_json, 'HTTP_X_AUTH_TOKEN' => org.users.first.api_key.key }
 
       it 'rejects the request' do
         last_response.status.should == 404

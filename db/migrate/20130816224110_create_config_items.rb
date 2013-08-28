@@ -6,6 +6,7 @@ class CreateConfigItems < ActiveRecord::Migration
       t.text :value
       t.timestamps
     end
+    add_index :config_items, :organization_id, name: 'config_items_organization_id_idx'
   end
 
   def down

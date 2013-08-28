@@ -26,7 +26,7 @@ class User < ActiveRecord::Base
 
   def as_json(options = {})
     hash = serializable_hash(options)
-    hash[:api_key] = api_key.key
+    hash[:api_key] = api_key.key unless api_key.nil?
     hash = {user: hash} if options[:root] == true
     hash
   end

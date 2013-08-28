@@ -44,8 +44,7 @@ module Sinatra
         app.put '/consumers/:id' do
           auth_user
 
-          consumer_data = @data['consumer']
-          consumer_data.extract!(%w{name})
+          consumer_data = @data['consumer'].extract!(*%w{name})
 
           begin
             consumer = Consumer.find(params[:id])

@@ -7,6 +7,7 @@ class CreateUsers < ActiveRecord::Migration
       t.string :role
       t.timestamps
     end
+    add_index :users, :organization_id, name: 'users_organization_id_idx'
   end
 
   def down

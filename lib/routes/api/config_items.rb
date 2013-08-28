@@ -48,8 +48,7 @@ module Sinatra
         app.put '/config_items/:id' do
           auth_user
 
-          item_data = @data['config_item']
-          item_data.extract!(%w{name value})
+          item_data = @data['config_item'].extract!(*%w{name value})
           
           begin
             item = ConfigItem.find(params[:id])
