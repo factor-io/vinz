@@ -6,7 +6,7 @@ BOX_URI = ENV['BOX_URI'] || "http://files.vagrantup.com/precise64.box"
 VF_BOX_URI = ENV['BOX_URI'] || "http://files.vagrantup.com/precise64_vmware_fusion.box"
 AWS_REGION = ENV['AWS_REGION'] || "us-east-1"
 AWS_AMI    = ENV['AWS_AMI']    || "ami-d0f89fb9"
-FORWARD_DOCKER_PORTS = ENV['FORWARD_DOCKER_PORTS']
+FORWARD_DOCKER_PORTS = ENV['FORWARD_DOCKER_PORTS'] || true
 
 Vagrant::Config.run do |config|
   # Setup virtual machine box. This VM configuration code is always executed.
