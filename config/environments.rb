@@ -5,14 +5,16 @@ configure :production do
   raise "ENCRYPTION_KEY is required" if ENV['ENCRYPTION_KEY'].nil?
 
   use Rack::SSL
-  db = URI.parse(ENV['DATABASE_URL'] || 'postgres:///localhost/vinz')
 
+  vcap_services = JSON.parse(ENV['VCAP_SERVICES'])
+  pg_config = vcap_services['postgresql-9.1'].first
+  pg_creds = pg_config['credentials']
   ActiveRecord::Base.establish_connection(
-    :adapter  => db.scheme == 'postgres' ? 'postgresql' : db.scheme,
-    :host     => db.host,
-    :username => db.user,
-    :password => db.password,
-    :database => db.path[1..-1],
+    :adapter  => 'postgresql',
+    :host     => pg_creds['host'],
+    :username => pg_creds['user'],
+    :password => pg_creds['password'],
+    :database => pg_creds['name'],
     :encoding => 'utf8'
   )
 end

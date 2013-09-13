@@ -11,7 +11,7 @@ Dir[File.join("./lib", "**/*.rb")].each do |f|
   require f
 end
 
-class VinzApp < Sinatra::Base
+class VinzWeb < Sinatra::Base
   require 'rack/csrf'
   require 'rack/flash'
 
@@ -22,14 +22,14 @@ class VinzApp < Sinatra::Base
     use Rack::MethodOverride
   end
 
-  helpers Sinatra::App::Helpers
+  helpers Sinatra::Web::Helpers
 
-  register Sinatra::App::Dashboard
-  register Sinatra::App::Session
-  #register Sinatra::App::Users
-  register Sinatra::App::ConfigItems
-  register Sinatra::App::Consumers
-  register Sinatra::App::Admin
+  register Sinatra::Web::Dashboard
+  register Sinatra::Web::Session
+  #register Sinatra::Web::Users
+  register Sinatra::Web::ConfigItems
+  register Sinatra::Web::Consumers
+  register Sinatra::Web::Admin
 
 end
 
