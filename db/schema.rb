@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130821213909) do
+ActiveRecord::Schema.define(version: 20130914004456) do
 
   create_table "api_keys", force: true do |t|
     t.integer  "key_owner_id"
@@ -55,6 +55,7 @@ ActiveRecord::Schema.define(version: 20130821213909) do
     t.string   "role"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "email"
   end
 
   add_index "users", ["organization_id"], name: "users_organization_id_idx"
