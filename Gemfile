@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 
 gem 'rake', '10.0.4'
 gem 'sinatra', '1.4.3'
+gem 'thin'
 gem 'activerecord'
 gem 'sinatra-activerecord'
 gem 'activesupport'
