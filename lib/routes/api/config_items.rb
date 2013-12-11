@@ -11,11 +11,11 @@ module Sinatra
           #@consumer.organization.config_items.to_json(root: true)
         end
 
-        app.get '/config_items/:id' do
+        app.get '/config_items/:name' do
           auth_consumer
 
           begin
-            item = ConfigItem.find(params[:id])
+            item = @consumer.organization.config_items.find_by_name(params[:name])
             halt 401 if @consumer.organization != item.organization
           rescue ActiveRecord::RecordNotFound
             halt 404
@@ -45,13 +45,13 @@ module Sinatra
           item.to_json(root: true)
         end
 
-        app.put '/config_items/:id' do
+        app.put '/config_items/:name' do
           auth_user
 
           item_data = @data['config_item'].extract!(*%w{name value})
           
           begin
-            item = ConfigItem.find(params[:id])
+            item = @user.organization.config_items.find_by_name(params[:name])
             verify_ownership(@user, item)
             item.update_attributes!(item_data)
           rescue ActiveRecord::RecordNotFound
@@ -63,11 +63,11 @@ module Sinatra
           item.to_json(root: true)
         end
 
-        app.delete '/config_items/:id' do
+        app.delete '/config_items/:name' do
           auth_user
 
           begin
-            item = ConfigItem.find(params[:id])
+            item = @user.organization.config_items.find_by_name(params[:name])
             verify_ownership(@user, item)
             item.destroy
           rescue ActiveRecord::RecordNotFound
